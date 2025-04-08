@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="h-full" data-theme="true" data-theme-mode="light" dir="ltr" lang="fr">
 <head>
-    <title>BookMaster</title>
+    <title>Coding Tool Box</title>
     <meta charset="utf-8"/>
     <meta content="follow, index" name="robots"/>
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"/>
