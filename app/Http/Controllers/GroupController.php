@@ -17,4 +17,8 @@ class GroupController extends Controller
     public function index() {
         return view('pages.groups.index');
     }
+
+    public function store(Request $request) {
+        dd($request->numberGroup);
+    }
 }

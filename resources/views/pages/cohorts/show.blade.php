@@ -86,6 +86,27 @@
                 </div>
             </div>
         </div>
+        <div class="lg:col-span-1">
+            <div class="card h-full">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Ajouter un étudiant à la promotion
+                    </h3>
+                </div>
+                <div class="card-body flex flex-col gap-5">
+                    <form method="POST" action={{route("group.store")}}>
+                        @csrf
+                        <x-forms.input name="numberGroup" :value="old('numberGroup')" :label="__('Nombre de groupes')" />
+
+                        <x-forms.input name="numberUsersInGroups" :value="old('numberUsersInGroups')" :label="__('Nombre étudiants/groupe')" />
+
+                        <x-forms.primary-button>
+                            {{ __('Valider') }}
+                        </x-forms.primary-button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- end: grid -->
 </x-app-layout>

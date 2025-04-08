@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cohort;
+use App\Models\UserSchool;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -15,7 +16,15 @@ class CohortController extends Controller
      * @return Factory|View|Application|object
      */
     public function index() {
-        return view('pages.cohorts.index');
+
+        $cohors = Cohort::all();
+
+        $usersInSchools = UserSchool::all();
+
+        return view('pages.cohorts.index', [
+            'cohors' => $cohors,
+            'usersInSchools' => $usersInSchools
+        ]);
     }
 
 
