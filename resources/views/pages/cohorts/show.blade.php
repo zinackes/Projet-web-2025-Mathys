@@ -41,6 +41,13 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    @foreach($usersInCohort as $userInCohort)
+                                        <tr>
+                                            <td>{{$userInCohort->user->last_name}}</td>
+                                            <td>{{$userInCohort->user->first_name}}</td>
+                                            <td>{{$userInCohort->user->first_name}}</td>
+                                        </tr>
+                                    @endforeach
                                         <tr>
                                         <td>Doe</td>
                                         <td>John</td>
@@ -94,11 +101,15 @@
                     </h3>
                 </div>
                 <div class="card-body flex flex-col gap-5">
-                    <form method="POST" action={{route("group.store")}}>
+                    <form class="flex flex-col gap-3" method="POST" action={{route("group.store")}}>
                         @csrf
-                        <x-forms.input name="numberGroup" :value="old('numberGroup')" :label="__('Nombre de groupes')" />
+                        <x-forms.input name="numberGroup" :value="old('numberGroup')" :label="__('Nombre de groupes')"
+                                       :messages="$errors->get('numberGroup')"/>
 
-                        <x-forms.input name="numberUsersInGroups" :value="old('numberUsersInGroups')" :label="__('Nombre étudiants/groupe')" />
+                        <x-forms.input name="numberUsersInGroups" :value="old('numberUsersInGroups')" :label="__('Nombre étudiants/groupe')"
+                                       :messages="$errors->get('numberUsersInGroups')"/>
+
+                        <input type="hidden" name="cohort_id" value="{{ $cohort->id }}">
 
                         <x-forms.primary-button>
                             {{ __('Valider') }}

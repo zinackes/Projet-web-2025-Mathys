@@ -9,6 +9,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\KnowledgeController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TeacherController;
+use App\Services\MistralService;
 use Illuminate\Support\Facades\Route;
 
 // Redirect the root path to /dashboard
@@ -46,8 +47,16 @@ Route::middleware('auth')->group(function () {
 
         // Common life
         Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');
+
+        Route::get('/prompt-result', [GroupController::class, 'promptResult'])->name('prompt.result');
     });
 
+});
+
+Route::get('/mistral-test', function (MistralService $mistral) {
+    $prompt = "Explique moi le Big Bang simplement.";
+    $result = $mistral->generateText($prompt);
+    return nl2br(e($result));
 });
 
 require __DIR__.'/auth.php';

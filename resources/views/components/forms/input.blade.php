@@ -6,7 +6,8 @@
     'value'         => '',
     'resetLink'     => false,
     'disabled'      => false,
-    'messages'      => false
+    'messages'      => false,
+    'required' => false,
 ])
 
 <div {{ $attributes->merge(['class' => 'flex flex-col gap-1']) }}>

@@ -11,19 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users_schools', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-
+        Schema::create('users_cohorts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('school_id');
-            $table->enum('role', ['admin', 'teacher', 'student'])->default('student');
+            $table->UnsignedBigInteger('user_id');
+            $table->UnsignedBigInteger('cohort_id');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')
                 ->onDelete('cascade');
 
-            $table->foreign('school_id')->references('id')->on('schools')
+            $table->foreign('cohort_id')->references('id')->on('cohorts')
                 ->onDelete('cascade');
         });
     }
@@ -33,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users_schools');
+        Schema::dropIfExists('users_cohorts');
     }
 };

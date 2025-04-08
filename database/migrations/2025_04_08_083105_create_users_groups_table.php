@@ -17,6 +17,12 @@ return new class extends Migration
             $table->unsignedBigInteger('group_id');
             $table->enum('role', ['Scrum Master', 'développeur'])->default('développeur');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onDelete('cascade');
+
+            $table->foreign('group_id')->references('id')->on('groups')
+                ->onDelete('cascade');
         });
     }
 
