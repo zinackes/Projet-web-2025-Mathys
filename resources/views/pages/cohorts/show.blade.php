@@ -45,17 +45,8 @@
                                         <tr>
                                             <td>{{$userInCohort->user->last_name}}</td>
                                             <td>{{$userInCohort->user->first_name}}</td>
-                                            <td>{{$userInCohort->user->first_name}}</td>
                                         </tr>
                                     @endforeach
-                                        <tr>
-                                        <td>Doe</td>
-                                        <td>John</td>
-                                        <td>10/02/2000</td>
-                                        <td class="cursor-pointer pointer">
-                                            <i class="ki-filled ki-trash"></i>
-                                        </td>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -93,26 +84,39 @@
                 </div>
             </div>
         </div>
-        <div class="lg:col-span-1">
+        <div class="lg:col-span-3">
             <div class="card h-full">
-                <div class="card-header">
+                <div class="card-header justify-center">
                     <h3 class="card-title">
-                        Ajouter un étudiant à la promotion
+                        Génerer des groupes
                     </h3>
                 </div>
                 <div class="card-body flex flex-col gap-5">
                     <form class="flex flex-col gap-3" method="POST" action={{route("group.store")}}>
                         @csrf
-                        <x-forms.input name="numberGroup" :value="old('numberGroup')" :label="__('Nombre de groupes')"
-                                       :messages="$errors->get('numberGroup')"/>
 
-                        <x-forms.input name="numberUsersInGroups" :value="old('numberUsersInGroups')" :label="__('Nombre étudiants/groupe')"
-                                       :messages="$errors->get('numberUsersInGroups')"/>
+                        <div class="flex gap-3 items-center justify-center">
+                            <x-forms.input
+                                name="numberGroup"
+                                :value="old('numberGroup')"
+                                :label="__('Nombre de groupes')"
+                                :messages="$errors->get('numberGroup')"
+                                :type="'number'" />
+
+
+                            <x-forms.input name="numberUsersInGroups" :value="old('numberUsersInGroups')" :label="__('Nombre étudiants/groupe')"
+                                           :messages="$errors->get('numberUsersInGroups')"
+                                :type="'number'"/>
+
+                            <x-forms.input name="project_name" :value="old('project_name')" :label="__('Nom du projet')"
+                                           :messages="$errors->get('project_name')"/>
+                        </div>
+
 
                         <input type="hidden" name="cohort_id" value="{{ $cohort->id }}">
 
                         <x-forms.primary-button>
-                            {{ __('Valider') }}
+                            {{ __('Génerer') }}
                         </x-forms.primary-button>
                     </form>
                 </div>

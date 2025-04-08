@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
         $user = User::create([
             'last_name'     => 'Doe',
             'first_name'    => 'John',
-            'grade'         => 10,
+            'grade'         => 13,
             'email'         => 'john.doe@codingfactory.com',
             'password'      => Hash::make('123456'),
         ]);
@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
         $user2 = User::create([
             'last_name'     => 'Smith',
             'first_name'    => 'Jane',
-            'grade'         => 12,
+            'grade'         => 8,
             'email'         => 'jane.smith@codingfactory.com',
             'password'      => Hash::make('123456'),
         ]);
@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
         $user3 = User::create([
             'last_name'     => 'Brown',
             'first_name'    => 'Alice',
-            'grade'         => 9,
+            'grade'         => 5,
             'email'         => 'alice.brown@codingfactory.com',
             'password'      => Hash::make('123456'),
         ]);
@@ -70,7 +70,7 @@ class DatabaseSeeder extends Seeder
         $user5 = User::create([
             'last_name'     => 'Williams',
             'first_name'    => 'Charlie',
-            'grade'         => 10,
+            'grade'         => 14,
             'email'         => 'charlie.williams@codingfactory.com',
             'password'      => Hash::make('123456'),
         ]);
@@ -78,7 +78,7 @@ class DatabaseSeeder extends Seeder
         $user6 = User::create([
             'last_name'     => 'Miller',
             'first_name'    => 'David',
-            'grade'         => 8,
+            'grade'         => 6,
             'email'         => 'david.miller@codingfactory.com',
             'password'      => Hash::make('123456'),
         ]);
@@ -86,7 +86,7 @@ class DatabaseSeeder extends Seeder
         $user7 = User::create([
             'last_name'     => 'Wilson',
             'first_name'    => 'Emily',
-            'grade'         => 12,
+            'grade'         => 16,
             'email'         => 'emily.wilson@codingfactory.com',
             'password'      => Hash::make('123456'),
         ]);
@@ -94,7 +94,7 @@ class DatabaseSeeder extends Seeder
         $user8 = User::create([
             'last_name'     => 'Moore',
             'first_name'    => 'Frank',
-            'grade'         => 7,
+            'grade'         => 9,
             'email'         => 'frank.moore@codingfactory.com',
             'password'      => Hash::make('123456'),
         ]);
@@ -102,7 +102,7 @@ class DatabaseSeeder extends Seeder
         $user9 = User::create([
             'last_name'     => 'Taylor',
             'first_name'    => 'Grace',
-            'grade'         => 11,
+            'grade'         => 2,
             'email'         => 'grace.taylor@codingfactory.com',
             'password'      => Hash::make('123456'),
         ]);
@@ -110,7 +110,7 @@ class DatabaseSeeder extends Seeder
         $user10 = User::create([
             'last_name'     => 'Anderson',
             'first_name'    => 'Henry',
-            'grade'         => 9,
+            'grade'         => 19,
             'email'         => 'henry.anderson@codingfactory.com',
             'password'      => Hash::make('123456'),
         ]);
@@ -233,7 +233,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         UserGroup::create([
-            'user_id'   => $user3->id,
+            'user_id'   => $user7->id,
             'group_id' => $group1->id,
             'role' => 'Développeur',
         ]);
