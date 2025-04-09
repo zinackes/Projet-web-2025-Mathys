@@ -16,7 +16,7 @@ class MistralService
                 'messages' => [
                     ['role' => 'user', 'content' => $prompt],
                 ],
-                'temperature' => 0.1,
+                'temperature' => 0,
             ]);
 
         if ($response->successful()) {

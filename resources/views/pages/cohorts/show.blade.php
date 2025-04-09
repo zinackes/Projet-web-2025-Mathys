@@ -92,7 +92,7 @@
                     </h3>
                 </div>
                 <div class="card-body flex flex-col gap-5">
-                    <form class="flex flex-col gap-3" method="POST" action={{route("group.store")}}>
+                    <form class="flex flex-col gap-3" method="POST" action={{route("group.generate")}}>
                         @csrf
 
                         <div class="flex gap-3 items-center justify-center">

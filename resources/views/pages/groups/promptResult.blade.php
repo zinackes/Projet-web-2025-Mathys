@@ -29,7 +29,20 @@
                     $average = count($group['students']) > 0 ? round($total / count($group['students']), 2) : 0;
                 @endphp
 
-                <div class="card-body">
+                <div id="students-group-{{ $group['group_id'] }}" class="grid lg:grid-cols-2 gap-5 lg:gap-7.5" data-sortable="true">
+                    @foreach($group['students'] as $student)
+                        <div class="student-card flex flex-col justify-center items-center py-2 mx-3 lg:mx-5 duration-300 rounded-lg {{
+                            $student['grade'] >= 15 ? 'bg-green-200/70 border !border-green-200/90 hover:bg-green-300/80' :
+                            ($student['grade'] >= 10 ? 'bg-yellow-200/70 border !border-yellow-200/90 hover:bg-yellow-300/80' :
+                            'bg-red-200/70 border !border-red-200/90 hover:bg-red-300/80') }}"
+                             data-id="{{ $student['id'] }}" draggable="true">
+                            <strong class="text-base text-center">{{ $student['first_name'] }} {{ $student['last_name'] }}</strong>
+                            <span class="text-xs text-gray-600">(Moyenne bilan: {{ $student['grade'] }})</span>
+                        </div>
+                    @endforeach
+                </div>
+
+                <div class="card-body w-full">
                     <div class="flex items-center justify-center gap-2">
                         @if ($average >= 15)
                             <span class="text-green-500 text-lg">
@@ -49,31 +62,55 @@
                         @endif
                     </div>
                 </div>
-
-                <!-- Section des étudiants avec drag-and-drop -->
-                <div id="students-group-{{ $group['group_id'] }}" class="grid lg:grid-cols-2 gap-5 lg:gap-7.5" data-sortable="true">
-                    @foreach($group['students'] as $student)
-                        <div class="student-card flex flex-col justify-center items-center py-2 mx-3 lg:mx-5 duration-300 rounded-lg {{
-                            $student['grade'] >= 15 ? 'bg-green-200/70 border !border-green-200/90 hover:bg-green-300/80' :
-                            ($student['grade'] >= 10 ? 'bg-yellow-200/70 border !border-yellow-200/90 hover:bg-yellow-300/80' :
-                            'bg-red-200/70 border !border-red-200/90 hover:bg-red-300/80') }}"
-                             data-id="{{ $student['id'] }}" draggable="true">
-                            <strong class="text-base text-center">{{ $student['first_name'] }} {{ $student['last_name'] }}</strong>
-                            <span class="text-xs text-gray-600">(Moyenne bilan: {{ $student['grade'] }})</span>
-                        </div>
-                    @endforeach
-                </div>
             </div>
         @endforeach
+
+
+
     </div>
 
-    <!-- Modal pour les 3 petits points -->
+    <div class="flex items-center justify-center gap-3 mt-5">
+        <form action="{{ route('group.store') }}" method="POST">
+            @csrf
+
+            <button type="submit" class="btn btn-danger">Valider les groupes</button>
+        </form>
+
+        <form method="POST" action={{route("group.generate")}}>
+            @csrf
+
+            <div class="flex gap-3 items-center justify-center">
+                <x-forms.input
+                    class="hidden"
+                    name="numberGroup"
+                    :value="$request->input('numberGroup')"
+                    :label="__('Nombre de groupes')"
+                    :messages="$errors->get('numberGroup')"
+                    :type="'number'" />
+
+
+                <x-forms.input class="hidden" name="numberUsersInGroups" :value="$request->input('numberUsersInGroups')" :label="__('Nombre étudiants/groupe')"
+                               :messages="$errors->get('numberUsersInGroups')"
+                               :type="'number'"/>
+
+                <x-forms.input class="hidden" name="project_name" :value="$request->input('project_name')" :label="__('Nom du projet')"
+                               :messages="$errors->get('project_name')"/>
+            </div>
+
+
+            <input type="hidden" name="cohort_id" value="{{ $request->cohort_id }}">
+
+            <x-forms.primary-button>
+                {{ __('Regénerer les groupes') }}
+            </x-forms.primary-button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <script>
         // Initialisation du drag and drop pour chaque groupe
         document.querySelectorAll('[id^="students-group-"]').forEach(group => {
             new Sortable(group, {
-                group: "students", // Permet de déplacer entre plusieurs groupes
+                group: "students",
                 animation: 150,
                 ghostClass: 'sortable-ghost',
                 dragClass: 'sortable-drag',
@@ -86,12 +123,10 @@
                     const oldGroupId = evt.from.id.replace('students-group-', '');
                     const newGroupId = evt.to.id.replace('students-group-', '');
 
-                    // Si l'élément n'a pas changé de groupe, on ne fait rien
                     if (oldGroupId !== newGroupId) {
                         console.log(`L'étudiant avec l'ID ${movedStudentId} a été déplacé de ${oldGroupId} vers ${newGroupId}`);
                     }
 
-                    // Affichage des IDs des étudiants dans la nouvelle carte
                     const updatedStudentOrder = Array.from(evt.to.children).map((child) => child.dataset.id);
                     console.log("Ordre des étudiants dans la nouvelle carte: ", updatedStudentOrder);
                 }
