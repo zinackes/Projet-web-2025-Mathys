@@ -47,6 +47,8 @@ class RetroController extends Controller
         }
 
 
-        return response()->json($response);
+        return response()->view('pages.retros.index', [
+            'retro' => $response,
+        ]);
     }
 }

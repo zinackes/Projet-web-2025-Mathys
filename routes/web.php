@@ -50,6 +50,9 @@ Route::middleware('auth')->group(function () {
         // Common life
         Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');
 
+
+        Route::get('/retro', [RetroController::class, 'show'])->name('retro.show');
+
         Route::get('/prompt-result', [GroupController::class, 'promptResult'])->name('prompt.result');
     });
 
