@@ -43,33 +43,25 @@ class GroupController extends Controller
 
         $studentsInGroupsJson = json_encode($studentsGroups->toArray(), JSON_PRETTY_PRINT);
 
-        $maxGroupPossible = $request->numberUsersInGroups / $request->numberGroup;
+        $totalStudents = $students->count();
 
         $rules = [
-            'numberGroup' => "required|integer|min:1|max:{$students->count()}",
+            'numberGroup' => "required|integer|min:1",
             'numberUsersInGroups' => 'required|integer|min:1',
+            'project_name' => 'nullable|string|max:255',
         ];
 
         $messages = [
             'numberGroup.required' => 'Le nombre de groupes est obligatoire.',
             'numberGroup.integer' => 'Le nombre de groupes doit être un entier.',
             'numberGroup.min' => 'Le nombre de groupes doit être d\'au moins 1.',
-            'numberUsersInGroups.required' => 'Le nombre d\'utilisateurs par groupe est obligatoire.',
-            'numberUsersInGroups.integer' => 'Le nombre d\'utilisateurs par groupe doit être un entier.',
-            'numberUsersInGroups.min' => 'Le nombre d\'utilisateurs par groupe doit être d\'au moins 1.',
+
+            'numberUsersInGroups.required' => 'Le nombre d\'étudiants par groupe est obligatoire.',
+            'numberUsersInGroups.integer' => 'Le nombre d\'étudiants par groupe doit être un entier.',
+            'numberUsersInGroups.min' => 'Il doit y avoir au moins un étudiant par groupe.',
         ];
 
-        if ($request->numberUsersInGroups) {
-            if ($request->numberGroup <= $maxGroupPossible) {
-                $rules['numberGroup'] .= "|max:{$maxGroupPossible}";
-                $messages['numberGroup.max'] = "Le nombre de groupes ne peut pas être supérieur au ratio d'étudiants ({$maxGroupPossible}).";
-            }
-        } else {
-            $rules['numberGroup'] .= "|max:0";
-            $messages['numberGroup.max'] = "Il est nécessaire d'avoir un nombre d'élèves par groupe.";
-        }
 
-        $request->validate($rules, $messages);
 
 
         $prompt = "
