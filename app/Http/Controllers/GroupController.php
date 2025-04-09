@@ -10,9 +10,11 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Http;
 use App\Services\MistralService;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Date;
 
 class GroupController extends Controller
 {
@@ -71,6 +73,7 @@ class GroupController extends Controller
 
 
         $prompt = "
+        [STRICT INSTRUCTIONS - JSON OUTPUT ONLY]
 Vous êtes un moteur de calcul ultra strict.
 
 Votre mission est de répartir une promotion d'étudiants en groupes, en respectant **strictement** les règles suivantes.
@@ -169,6 +172,7 @@ Répondez **uniquement** avec un JSON strictement conforme à cette structure :
 
         $decoded = json_decode($jsonString, true);
 
+
         if (json_last_error() === JSON_ERROR_NONE) {
             session(['generated_groups' => $decoded]);
             return view('pages.groups.promptResult', [
@@ -194,7 +198,31 @@ Répondez **uniquement** avec un JSON strictement conforme à cette structure :
             return redirect()->back()->with('error', 'Les groupes ne sont plus disponibles.');
         }
 
-        dd($groups);
+        foreach ($groups as $group) {
+            $createdGroup = Group::create([
+                'user_id' => auth()->user()->id,
+                'group_name' => "Groupe " . $group['group_id'],
+                'description' => 'aucune',
+                'start_date' => Date::create(2025, 1, 1, 12, 0, 0),
+                'end_date' => Date::create(2025, 1, 1, 12, 0, 0),
+                'project_name' =>  $request->project_name
+            ]);
+
+            $newGroupId = $createdGroup->id;
+
+            foreach ($group['students'] as $student) {
+                UserGroup::create([
+                    'user_id' => $student['id'],
+                    'group_id' => $newGroupId,
+                    'role' => 'Développeur'
+                ]);
+            }
+        }
+
+        session()->forget('generated_groups');
+
+        return redirect()->route('cohort.show', $request->cohort_id)
+            ->with('success', 'Groupes créés avec succès!');
     }
 
 

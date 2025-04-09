@@ -5,6 +5,12 @@
         </h1>
     </x-slot>
 
+    @if(session('success'))
+        <div class="mb-4 px-4 py-3 bg-green-100 border border-green-300 text-green-800 rounded-lg">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <!-- begin: grid -->
     <div class="grid lg:grid-cols-3 gap-5 lg:gap-7.5 items-stretch">
         <div class="lg:col-span-2">

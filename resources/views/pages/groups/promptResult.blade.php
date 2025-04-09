@@ -73,6 +73,12 @@
         <form action="{{ route('group.store') }}" method="POST">
             @csrf
 
+            <x-forms.input class="hidden" name="project_name" :value="$project_name" :label="__('Nom du projet')"
+                           :messages="$errors->get('project_name')"/>
+
+            <x-forms.input class="hidden" name="cohort_id" :value="$request->cohort_id" :label="__('Nom du projet')"
+                           :messages="$errors->get('cohort_id')" :type="'number'"/>
+
             <button type="submit" class="btn btn-danger">Valider les groupes</button>
         </form>
 
@@ -93,12 +99,9 @@
                                :messages="$errors->get('numberUsersInGroups')"
                                :type="'number'"/>
 
-                <x-forms.input class="hidden" name="project_name" :value="$request->input('project_name')" :label="__('Nom du projet')"
+                <x-forms.input class="hidden" name="project_name" :value="$project_name" :label="__('Nom du projet')"
                                :messages="$errors->get('project_name')"/>
             </div>
-
-
-            <input type="hidden" name="cohort_id" value="{{ $request->cohort_id }}">
 
             <x-forms.primary-button>
                 {{ __('Regénerer les groupes') }}
