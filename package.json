@@ -7,7 +7,7 @@
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "mix --production",
     },
     "devDependencies": {
         "alpinejs": "^3.4.2",
@@ -18,7 +18,11 @@
         "laravel-vite-plugin": "^1.2.0",
         "postcss": "^8.4.31",
         "resolve-url-loader": "^5.0.0",
+        "rollup": "^4.39.0",
         "sass": "^1.86.3",
         "sass-loader": "^12.1.0"
+    },
+    "dependencies": {
+        "@syncfusion/ej2-kanban": "^29.1.37"
     }
 }

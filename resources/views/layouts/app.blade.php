@@ -12,6 +12,7 @@
     <link href="{{ asset('metronic/vendors/apexcharts/apexcharts.css') }}" rel="stylesheet"/>
     <link href="{{ asset('metronic/vendors/keenicons/styles.bundle.css') }}" rel="stylesheet"/>
     <link href="{{ asset('metronic/css/styles.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('kanban/dist/kanban.css') }}" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://kit.fontawesome.com/1e46e56962.js" crossorigin="anonymous"></script>
 
@@ -88,6 +89,7 @@
 <script src="{{ asset('metronic/js/core.bundle.js') }}"></script>
 <script src="{{ asset('metronic/vendors/apexcharts/apexcharts.min.js') }}"></script>
 <script src="{{ asset('metronic/js/widgets/general.js') }}"></script>
+<script src="{{ asset('kanban/dist/kanban.js') }}"></script>
 <!-- End of Scripts -->
 </body>
 </html>
