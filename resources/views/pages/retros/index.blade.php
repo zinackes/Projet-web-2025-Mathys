@@ -103,20 +103,31 @@
 
                                             $start = \Carbon\Carbon::parse($retro->start_date);
                                             $end = \Carbon\Carbon::parse($retro->end_date);
+
+                                            $isBeforeTime = !\Carbon\Carbon::parse($retro->start_date)->isPast();
+                                            $hasBegun = now()->between($start, $end);
                                         @endphp
 
-                                        @if (!\Carbon\Carbon::parse($retro->start_date)->isPast())
-                                            <span class="badge badge-dot size-2 bg-warning"></span>
-                                        @elseif(now()->between($start, $end))
+                                        @if ($isBeforeTime)
+                                            <div class="bg-orange-200/70 rounded-lg flex items-center justify-evenly">
+                                                <span class="badge badge-dot size-2 bg-warning"></span>
+                                                <p class="text-xs text-orange-500/80">Attente</p>
+                                            </div>
+                                        @elseif($hasBegun)
                                             <span class="badge badge-dot size-2 bg-success"></span>
                                         @else
-                                            <span class="badge badge-dot size-2 bg-danger"></span>
+                                            <span class="badge badge-dot size-2 bg-gray-400"></span>
                                         @endif
                                     </td>
                                     <td class="text-center">
-                                        <a href={{route("retro.show", ['cohortId' => $retro->id])}}>
-                                            <i class="ki-filled ki-paper-plane"></i>
-                                        </a>
+                                        @if($isBeforeTime)
+                                            <i class="ki-filled ki-paper-plane cursor-not-allowed"></i>
+                                        @else
+                                            <a class="group" href={{route("retro.show", ['cohortId' => $retro->id])}}>
+                                                <i class="ki-filled ki-paper-plane group-hover:text-primary duration-300"></i>
+                                            </a>
+                                        @endif
+
                                     </td>
                                 </tr>
                             @endforeach
@@ -140,5 +151,10 @@
                 </div>
             </div>
         </div>
+        @can('viewForm', \App\Models\Retros::class)
+            <div class="card card">
+                FORM POUR CRÉER RETRO
+            </div>
+        @endcan
     </div>
 </x-app-layout>

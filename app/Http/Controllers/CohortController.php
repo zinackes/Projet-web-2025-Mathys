@@ -49,7 +49,7 @@ class CohortController extends Controller
     public function update(Request $request)
     {
         // Trouver le cohort ou échouer
-        $cohort = Cohort::findOrFail(1);
+            $cohort = Cohort::findOrFail(1);
 
         // Mise à jour du cohort
         $cohort->update([

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Retros;
 use App\Models\Cohort;
 use App\Models\UserCohort;
+use App\Models\UserSchool;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -13,56 +14,80 @@ use Illuminate\Http\Request;
 class RetroController extends Controller
 {
     /**
-     * Display the page
+     * Show the list of retrospectives for the user's cohort.
      *
      * @return Factory|View|Application|object
      */
     public function index() {
 
-        $cohortId = UserCohort::where('user_id', auth()->user()->id)->first()->cohort_id;
+        $userInSchool = UserSchool::where('user_id', auth()->user()->id)->first();
 
-        $retros = Retros::where('cohort_id', $cohortId)->get();
 
+        if($userInSchool->role === "admin"){
+            // Get all the retros for admin
+            $retros = Retros::all();
+        }
+        else if($userInSchool->role === "teacher"){
+            // Get the retros made by the teacher
+            $retros = Retros::where('user_id', auth()->user()->id);
+        }
+        else{
+            // Get the user's cohort ID
+            $cohortId = UserCohort::where('user_id', auth()->user()->id)->first()->cohort_id;
+
+            // Get retros for this cohort
+            $retros = Retros::where('cohort_id', $cohortId)->get();
+        }
+
+
+        // Load the user related to the retros
         $retros->load('user');
 
+        // Return view with retros and cohort ID
         return view('pages.retros.index', [
             'retros' => $retros,
-            'cohortId' => $cohortId
         ]);
     }
 
+    /**
+     * Show details for a specific cohort with its retrospectives.
+     *
+     * @param int $cohortId The cohort ID
+     * @return Factory|View|Application|object
+     */
     public function show($cohortId) {
 
-
+        // Get the cohort with its retros, columns, and cards
         $cohort = Cohort::with('retros.columns.cards')->find($cohortId);
 
-        $response = [
-        ];
+        // Create an empty array to store the response
+        $response = [];
 
         foreach ($cohort->retros as $retro) {
+
             foreach ($retro->columns as $column) {
-                // Ajouter la colonne comme un "item"
+                // Add the column as an item
                 $columnData = [
                     'id' => 'column-id-' . $column->id,
-                    'title' => $column->name, // Ici, c'est la colonne qui est le titre
-                    'item' => []  // Un tableau pour les cartes sous cette colonne
+                    'title' => $column->name,
+                    'item' => []
                 ];
 
-                // Ajouter les cartes dans la section "item" de la colonne
                 foreach ($column->cards as $card) {
+                    // Add card to the item list
                     $columnData['item'][] = [
                         'id' => 'item-id-' . $card->id,
-                        'title' => $card->name, // Le titre de la carte
-                        'username' => $card->name  // Utiliser le nom de la carte comme username
+                        'title' => $card->name,
+                        'username' => $card->name
                     ];
                 }
 
-                // Ajouter la colonne avec ses cartes dans la réponse principale
+                // Add column data with cards to the response
                 $response[] = $columnData;
             }
         }
 
-
+        // Return view with retro data
         return response()->view('pages.retros.retro', [
             'retro' => $response,
         ]);
