@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\Cohort;
 use App\Models\Group;
+use App\Models\Retros;
+use App\Models\RetrosColumns;
+use App\Models\RetrosColumnsCards;
 use App\Models\School;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -143,7 +146,7 @@ class DatabaseSeeder extends Seeder
             'role'      => 'student',
         ]);
 
-        Cohort::create([
+        $cohort = Cohort::create([
             'school_id' => $school->id,
             'name'      => 'Promotion B1',
             'description' => 'Cergy',
@@ -254,6 +257,22 @@ class DatabaseSeeder extends Seeder
             'user_id'   => $user5->id,
             'group_id' => $group2->id,
             'role' => 'Scrum Master',
+        ]);
+
+        $retro = Retros::create([
+            'name' => 'Retro 1',
+            'cohort_id' => $cohort->id,
+        ]);
+
+        $retroColumn = RetrosColumns::create([
+            'retro_id' => $retro->id,
+            'name' => 'A ameliorer'
+        ]);
+
+        RetrosColumnsCards::create([
+            'retro_id' => $retro->id,
+            'column_id' => $retroColumn->id,
+            'name' => "blabla"
         ]);
     }
 }

@@ -47,14 +47,15 @@
                                             <td>
                                                 <div class="flex flex-col gap-2">
                                                     <a class="leading-none font-medium text-sm text-gray-900 hover:text-primary"
-                                                       href="{{ route('cohort.show', $cohort->id) }}">
+                                                       href="{{ route('cohort.show', $cohort->id) }}" id="cohort-name-{{ $cohort->id }}">
                                                         {{$cohort->name}}
                                                     </a>
                                                     <span class="text-2sm text-gray-700 font-normal leading-3">
-                                                    {{$cohort->description}}
-                                                </span>
+            {{$cohort->description}}
+        </span>
                                                 </div>
                                             </td>
+
                                             <td>{{ \Carbon\Carbon::parse($cohort->start_date)->format('Y') }} - {{ \Carbon\Carbon::parse($cohort->end_date)->format('Y') }}</td
                                         </tr>
                                     @endforeach
@@ -97,8 +98,32 @@
                         {{ __('Valider') }}
                     </x-forms.primary-button>
                 </div>
+                <form id="update-cohort-form" method="POST" action="{{ route('cohorts.update') }}">
+                    @csrf
+                    <label for="name">Nom du Cohort</label>
+                    <input type="text" name="name" id="name" value="{{ $cohort->name }}">
+                    <button type="submit">Mettre à jour</button>
+                </form>
+
             </div>
         </div>
     </div>
     <!-- end: grid -->
+
+    <script>
+        document.getElementById('update-cohort-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('{{ route('cohorts.update') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+                body: formData,
+            })
+        });
+
+    </script>
 </x-app-layout>

@@ -6,175 +6,59 @@
             </span>
         </h1>
     </x-slot>
-    <div id="toolbar" class="wx-material-theme"></div>
-    <div id="root" class="wx-material-theme"></div>
 
-    <script src="{{ asset('kanban/dist/kanban.js') }}"></script>
-    <script>
+    <div id="dd"></div>
 
-        function getData() {
-            const users = [
+    <script src="{{ asset('kanban/dist/jkanban.js') }}"></script>
+    <script >
+        var kanban = new jKanban({
+            element          : '#dd',                                           // selector of the kanban container
+            gutter           : '15px',                                       // gutter of the board
+            widthBoard       : '250px',                                      // width of the board
+            responsivePercentage: false,                                    // if it is true I use percentage in the width of the boards and it is not necessary gutter and widthBoard
+            dragItems        : true,                                         // if false, all items are not draggable
+            boards           : [
                 {
-                    id: 1,
-                    label: "Steve Smith",
-                    avatar: "https://snippet.dhtmlx.com/codebase/data/kanban/03/user1.png",
-                },
-                {
-                    id: 2,
-                    label: "Aaron Long",
-                    avatar: "https://snippet.dhtmlx.com/codebase/data/kanban/03/user2.jpeg",
-                },
-                {
-                    id: 3,
-                    label: "Angela Allen",
-                    avatar: "https://snippet.dhtmlx.com/codebase/data/kanban/03/user3.png",
-                },
-                {
-                    id: 4,
-                    label: "Angela Long",
-                    avatar: "https://snippet.dhtmlx.com/codebase/data/kanban/03/user4.png",
-                },
-            ];
-
-            const cardShape = {
-                label: true,
-                description: true,
-                progress: true,
-                start_date: true,
-                end_date: true,
-                users: {
-                    show: true,
-                    values: users,
-                },
-                priority: {
-                    show: true,
-                    values: [
-                        { id: 1, color: "#FF5252", label: "High" },
-                        { id: 2, color: "#FFC975", label: "Medium" },
-                        { id: 3, color: "#65D3B3", label: "Low" },
-                    ],
-                },
-                color: true,
-                menu: true,
-                cover: true,
-                attached: false,
-            };
-
-            const columns = [
-                {
-                    label: "Backlog",
-                    id: "backlog",
-                },
-                {
-                    label: "In progress",
-                    id: "inprogress",
-                },
-                {
-                    label: "Testing",
-                    id: "testing",
-                },
-                {
-                    label: "Done",
-                    id: "done",
-                },
-            ];
-
-            const rows = [
-                {
-                    label: "Feature",
-                    id: "feature",
-                },
-                {
-                    label: "Task",
-                    id: "task",
-                },
-            ];
-
-            const cards = [
-            ];
-
-            const groupData = [
-                { id: "column", label: "Column", columns },
-                {
-                    id: "sprint",
-                    label: "Sprint",
-                    columns: [
-                        { id: "1.0", label: "1.0" },
-                        { id: "1.1", label: "1.1" },
-                        { id: "1.2", label: "1.2" },
-                    ],
-                },
-                {
-                    id: "type",
-                    label: "Type",
-                    columns: [
-                        { id: "feature", label: "Feature" },
-                        { id: "task", label: "Task" },
-                    ],
-                },
-                {
-                    id: "priority",
-                    label: "Priority",
-                    columns: [
-                        { id: 1, label: "High" },
-                        { id: 2, label: "Medium" },
-                        { id: 3, label: "Low" },
-                    ],
-                },
-            ];
-
-            const links = [
-                {
-                    id: 1,
-                    masterId: 1,
-                    slaveId: 3,
-                    relation: "parent",
-                },
-                {
-                    id: 3,
-                    masterId: 1,
-                    slaveId: 3,
-                    relation: "duplicate",
-                },
-                {
-                    id: 4,
-                    masterId: 2,
-                    slaveId: 1,
-                    relation: "relatesTo",
-                },
-            ];
-
-            return {
-                rows,
-                columns,
-                cards,
-                users,
-                cardShape,
-                groupData,
-                links,
-            };
-        }
-
-        const { columns, cards } = getData();
-
-        const board = new kanban.Kanban("#root", {
-            cards,
-            columns
-        });
-
-        new kanban.Toolbar("#toolbar", {
-            api: board.api,
-            items: [
-                "search",
-                "spacer",
-                "sort",
-                "addColumn",
-                "addRow"
-            ]
-        });
-
-        board.api.on("drag-card", (obj) => {
-            console.log(obj.columnId);
-        });
+                    "id"    : "board-id-1",
+                    "title" : "Board Title",
+                    "item"  : [
+                        {
+                            "id"      : "item-id-1",
+                            "title"   : "Item 1",
+                            "username": "username1"
+                        },
+                        {
+                            "id"      : "item-id-2",
+                            "title"   : "Item 2",
+                            "username": "username2"
+                        }
+                    ]
+                }
+            ],                                           // json of boards
+            dragBoards       : true,                                         // the boards are draggable, if false only item can be dragged
+            itemAddOptions: {
+                enabled: false,                                              // add a button to board for easy item creation
+                content: '+',                                                // text or html content of the board button
+                class: 'kanban-title-button btn btn-default btn-xs',         // default class of the button
+                footer: false                                                // position the button on footer
+            },
+            itemHandleOptions: {
+                enabled             : false,                                 // if board item handle is enabled or not
+                handleClass         : "item_handle",                         // css class for your custom item handle
+                customCssHandler    : "drag_handler",                        // when customHandler is undefined, jKanban will use this property to set main handler class
+                customCssIconHandler: "drag_handler_icon",                   // when customHandler is undefined, jKanban will use this property to set main icon handler class. If you want, you can use font icon libraries here
+                customHandler       : "<span class='item_handle'>+</span> %title% "  // your entirely customized handler. Use %title% to position item title
+                                                                                     // any key's value included in item collection can be replaced with %key%
+            },
+            click            : function (el) {},                             // callback when any board's item are clicked
+            context          : function (el, event) {},                      // callback when any board's item are right clicked
+            dragEl           : function (el, source) {},                     // callback when any board's item are dragged
+            dragendEl        : function (el) {},                             // callback when any board's item stop drag
+            dropEl           : function (el, target, source, sibling) {},    // callback when any board's item drop in a board
+            dragBoard        : function (el, source) {},                     // callback when any board stop drag
+            dragendBoard     : function (el) {},                             // callback when any board stop drag
+            buttonClick      : function(el, boardId) {},                     // callback when the board's button is clicked
+            propagationHandlers: [],                                         // the specified callback does not cancel the browser event. possible values: "click", "context"
+        })
     </script>
 </x-app-layout>

@@ -12,9 +12,11 @@
     <link href="{{ asset('metronic/vendors/apexcharts/apexcharts.css') }}" rel="stylesheet"/>
     <link href="{{ asset('metronic/vendors/keenicons/styles.bundle.css') }}" rel="stylesheet"/>
     <link href="{{ asset('metronic/css/styles.css') }}" rel="stylesheet"/>
-    <link href="{{ asset('kanban/dist/kanban.css') }}" rel="stylesheet"/>
+    <link href="{{ asset('kanban/dist/jkanban.css') }}" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://kit.fontawesome.com/1e46e56962.js" crossorigin="anonymous"></script>
+    <script src="https://js.pusher.com/8.3.0/pusher.min.js"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
 
 </head>
 <body class="antialiased flex h-full text-base text-gray-700 [--tw-page-bg:#F6F6F9] [--tw-page-bg-dark:var(--tw-coal-200)]
@@ -89,7 +91,7 @@
 <script src="{{ asset('metronic/js/core.bundle.js') }}"></script>
 <script src="{{ asset('metronic/vendors/apexcharts/apexcharts.min.js') }}"></script>
 <script src="{{ asset('metronic/js/widgets/general.js') }}"></script>
-<script src="{{ asset('kanban/dist/kanban.js') }}"></script>
+<script src="{{ mix('js/app.js') }}"></script>
 <!-- End of Scripts -->
 </body>
 </html>
