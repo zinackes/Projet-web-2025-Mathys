@@ -15,4 +15,8 @@ class Retros extends Model
     public function columns(){
         return $this->hasMany('App\Models\RetrosColumns', 'retro_id');
     }
+
+    public function user(){
+        return $this->belongsTo('App\Models\User');
+    }
 }

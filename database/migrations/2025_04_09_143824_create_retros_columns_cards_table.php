@@ -21,6 +21,10 @@ return new class extends Migration
             $table->foreign('column_id')->references('id')->on('retros_columns')
                 ->onDelete('cascade');
 
+            $table->unsignedBigInteger('user_id'); // User assigned to the card
+            $table->foreign('user_id')->references('id')->on('users')
+                ->onDelete('cascade');
+
             $table->string('name');
             $table->timestamps();
         });

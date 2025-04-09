@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Retros;
 use App\Models\Cohort;
+use App\Models\UserCohort;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -18,7 +19,22 @@ class RetroController extends Controller
      */
     public function index() {
 
-        $cohort = Cohort::with('retros.columns.cards')->find(1);
+        $cohortId = UserCohort::where('user_id', auth()->user()->id)->first()->cohort_id;
+
+        $retros = Retros::where('cohort_id', $cohortId)->get();
+
+        $retros->load('user');
+
+        return view('pages.retros.index', [
+            'retros' => $retros,
+            'cohortId' => $cohortId
+        ]);
+    }
+
+    public function show($cohortId) {
+
+
+        $cohort = Cohort::with('retros.columns.cards')->find($cohortId);
 
         $response = [
         ];
@@ -47,7 +63,7 @@ class RetroController extends Controller
         }
 
 
-        return response()->view('pages.retros.index', [
+        return response()->view('pages.retros.retro', [
             'retro' => $response,
         ]);
     }

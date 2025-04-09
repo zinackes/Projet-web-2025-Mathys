@@ -260,8 +260,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $retro = Retros::create([
-            'name' => 'Retro 1',
+            'name' => 'Projet web',
             'cohort_id' => $cohort->id,
+            'user_id' => $admin->id,
+            'description' => "Ouais viens dans la retro",
+            'start_date' => \Carbon\Carbon::create(2025, 04, 18, 14, 00),
+            'end_date' => \Carbon\Carbon::create(2025, 04, 19, 00, 00),
         ]);
 
         $retroColumn = RetrosColumns::create([
@@ -272,7 +276,8 @@ class DatabaseSeeder extends Seeder
         RetrosColumnsCards::create([
             'retro_id' => $retro->id,
             'column_id' => $retroColumn->id,
-            'name' => "blabla"
+            'name' => "blabla",
+            'user_id' => $user2->id
         ]);
     }
 }

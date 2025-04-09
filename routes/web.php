@@ -46,12 +46,12 @@ Route::middleware('auth')->group(function () {
 
         // Retro
         route::get('retros', [RetroController::class, 'index'])->name('retro.index');
+        Route::get('/retro/{cohortId}', [RetroController::class, 'show'])->name('retro.show');
 
         // Common life
         Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');
 
 
-        Route::get('/retro', [RetroController::class, 'show'])->name('retro.show');
 
         Route::get('/prompt-result', [GroupController::class, 'promptResult'])->name('prompt.result');
     });

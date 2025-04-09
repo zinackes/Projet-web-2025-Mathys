@@ -7,42 +7,138 @@
         </h1>
     </x-slot>
 
-    <div id="dd"></div>
+    <div class="grid">
+        <div class="card card-grid min-w-full">
+            <div class="card-header py-5 flex-wrap">
+                <h3 class="card-title">
+                    Vos rétrospectives
+                </h3>
+            </div>
+            <div class="card-body">
+                <div data-datatable="true" data-datatable-page-size="5" data-datatable-state-save="true" id="datatable_1">
+                    <div class="scrollable-x-auto">
+                        <table class="table table-auto table-border" data-datatable-table="true">
+                            <thead>
+                            <tr>
+                                <th class="w-[185px] text-center">
+         <span class="sort asc">
+          <span class="sort-label">
+           Nom
+          </span>
+          <span class="sort-icon">
+          </span>
+         </span>
+                                </th>
+                                <th class="min-w-[150px]">
+         <span class="sort">
+          <span class="sort-label">
+           Description
+          </span>
+          <span class="sort-icon">
+          </span>
+         </span>
+                                </th>
+                                <th class="w-[185px]">
+         <span class="sort">
+          <span class="sort-label">
+           Organisateur
+          </span>
+          <span class="sort-icon">
+          </span>
+         </span>
+                                </th>
+                                <th class="w-[185px]">
+         <span class="sort">
+          <span class="sort-label">
+           Date de début
+          </span>
+          <span class="sort-icon">
+          </span>
+         </span>
+                                </th>
+                                <th class="w-[185px]">
+         <span class="sort">
+          <span class="sort-label">
+           Date de fin
+          </span>
+          <span class="sort-icon">
+          </span>
+         </span>
+                                </th>
+                                <th class="w-[100px]">
+         <span class="sort">
+          <span class="sort-label">
+           Status
+          </span>
+          <span class="sort-icon">
+          </span>
+         </span>
+                                </th>
+                                <th class="w-[60px]">
+                                </th>
+                                <th class="w-[60px]">
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($retros as $retro)
+                                <tr>
+                                    <td class="text-center">
+                                        {{$retro->name}}
+                                    </td>
+                                    <td>
 
-    <script src="{{ asset('kanban/dist/jkanban.js') }}"></script>
-    <script >
-        console.log(@json($retro));
-        var kanban = new jKanban({
-            element          : '#dd',                                           // selector of the kanban container
-            gutter           : '15px',                                       // gutter of the board
-            widthBoard       : '250px',                                      // width of the board
-            responsivePercentage: false,                                    // if it is true I use percentage in the width of the boards and it is not necessary gutter and widthBoard
-            dragItems        : true,                                         // if false, all items are not draggable
-            boards           : @json($retro),                                           // json of boards
-            dragBoards       : true,                                         // the boards are draggable, if false only item can be dragged
-            itemAddOptions: {
-                enabled: false,                                              // add a button to board for easy item creation
-                content: '+',                                                // text or html content of the board button
-                class: 'kanban-title-button btn btn-default btn-xs',         // default class of the button
-                footer: false                                                // position the button on footer
-            },
-            itemHandleOptions: {
-                enabled             : false,                                 // if board item handle is enabled or not
-                handleClass         : "item_handle",                         // css class for your custom item handle
-                customCssHandler    : "drag_handler",                        // when customHandler is undefined, jKanban will use this property to set main handler class
-                customCssIconHandler: "drag_handler_icon",                   // when customHandler is undefined, jKanban will use this property to set main icon handler class. If you want, you can use font icon libraries here
-                customHandler       : "<span class='item_handle'>+</span> %title% "  // your entirely customized handler. Use %title% to position item title
-                                                                                     // any key's value included in item collection can be replaced with %key%
-            },
-            click            : function (el) {},                             // callback when any board's item are clicked
-            context          : function (el, event) {},                      // callback when any board's item are right clicked
-            dragEl           : function (el, source) {},                     // callback when any board's item are dragged
-            dragendEl        : function (el) {},                             // callback when any board's item stop drag
-            dropEl           : function (el, target, source, sibling) {},    // callback when any board's item drop in a board
-            dragBoard        : function (el, source) {},                     // callback when any board stop drag
-            dragendBoard     : function (el) {},                             // callback when any board stop drag
-            buttonClick      : function(el, boardId) {},                     // callback when the board's button is clicked
-            propagationHandlers: [],                                         // the specified callback does not cancel the browser event. possible values: "click", "context"
-        })
-    </script>
+                                    </td>
+                                    <td>
+                                        {{$retro->user->last_name}} {{$retro->user->first_name}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ \Carbon\Carbon::parse($retro->start_date)->format('d/m/Y H:i') }}
+                                    </td>
+                                    <td class="text-center">
+                                        {{ \Carbon\Carbon::parse($retro->end_date)->format('d/m/Y H:i') }}
+                                    </td>
+                                    <td class="text-center">
+                                        @php
+
+                                            $start = \Carbon\Carbon::parse($retro->start_date);
+                                            $end = \Carbon\Carbon::parse($retro->end_date);
+                                        @endphp
+
+                                        @if (!\Carbon\Carbon::parse($retro->start_date)->isPast())
+                                            <span class="badge badge-dot size-2 bg-warning"></span>
+                                        @elseif(now()->between($start, $end))
+                                            <span class="badge badge-dot size-2 bg-success"></span>
+                                        @else
+                                            <span class="badge badge-dot size-2 bg-danger"></span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        <a href={{route("retro.show", ['cohortId' => $retro->id])}}>
+                                            <i class="ki-filled ki-paper-plane"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                        <div class="flex items-center gap-2">
+                            Show
+                            <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
+                            </select>
+                            per page
+                        </div>
+                        <div class="flex items-center gap-4">
+      <span data-datatable-info="true">
+      </span>
+                            <div class="pagination" data-datatable-pagination="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </x-app-layout>
