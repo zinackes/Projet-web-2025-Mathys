@@ -39,7 +39,8 @@ class RetroController extends Controller
         }
         else{
             // Get the user's cohort ID
-            $cohortId = UserCohort::where('user_id', auth()->user()->id)->first()->cohort_id;
+            $cohortId = UserCohort::where('user_id', auth()->user()->id)->first();
+            dd($cohortId);
 
             // Get retros for this cohort
             $retros = Retros::where('cohort_id', $cohortId)->get();
