@@ -291,7 +291,8 @@ var dragula = require('dragula');
           headerBoard.classList.add(value)
         })
         headerBoard.innerHTML =
-          '<div class="kanban-title-board">' + board.title + '</div>'
+          '<div class="kanban-title-board">' + board.title + '</div>' +
+            '<button onclick="deleteColumn(this)" class="ml-auto"><i class="ki-filled ki-trash"></i></button>'
         //content board
         var contentBoard = document.createElement('main')
         contentBoard.classList.add('kanban-drag')

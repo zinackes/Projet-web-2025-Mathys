@@ -26,6 +26,7 @@
     },
     "dependencies": {
         "@syncfusion/ej2-kanban": "^29.1.37",
-        "pusher": "^5.2.0"
+        "pusher": "^5.2.0",
+        "sweetalert2": "^11.17.2"
     }
 }

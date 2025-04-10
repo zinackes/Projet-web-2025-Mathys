@@ -49,7 +49,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/retro/{cohortId}/{retroId}', [RetroController::class, 'show'])->name('retro.show');
         Route::post('/retro/create', [RetroController::class, 'store'])->name('retro.store');
 
-        Route::get('/retro/getBoard', [RetroController::class, 'getBoard'])->name('retro.getBoard');
+        Route::put('/retro/updateCard/{id}', [RetroController::class, 'updateCard'])->name('retro.updateCard');
+        Route::delete('/retro/deleteCard/{id}', [RetroController::class, 'deleteCard'])->name('retro.deleteCard');
 
         Route::post('/retro/column', [RetroController::class, 'column'])->name('retro.column');
         Route::post('/retro/card', [RetroController::class, 'card'])->name('retro.card');

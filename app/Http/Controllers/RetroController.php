@@ -117,10 +117,31 @@ class RetroController extends Controller
         return response()->json($card, 201);
     }
 
+    public function updateCard(Request $request, $id) {
 
-    public function getBoard(){
+        $request->validate([
+            'column_id' => 'required|integer',
+            'name' => 'required|string',
+        ]);
 
+        $card = RetrosColumnsCards::findOrFail($id);
+
+        $card->update([
+            'column_id' => $request['column_id'],
+            'name' => $request['name'],
+        ]);
+
+        return response()->json(['message' => 'Column updated successfully', 'column' => $card]);
     }
+
+    public function deleteCard(Request $request, $id) {
+
+        $column = RetrosColumns::findOrFail($id);
+        $column->delete();
+
+        return response()->json(['message' => 'Colonne supprimée avec succès.'], 200);
+    }
+
 
     /**
      * Show details for a specific cohort with its retrospectives.
