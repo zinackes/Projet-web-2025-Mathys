@@ -134,7 +134,8 @@ class RetroController extends Controller
         return response()->json(['message' => 'Column updated successfully', 'column' => $card]);
     }
 
-    public function deleteCard(Request $request, $id) {
+    public function deleteCard($id) {
+
 
         $column = RetrosColumns::findOrFail($id);
         $column->delete();

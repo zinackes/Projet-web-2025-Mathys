@@ -91,30 +91,42 @@
         }
 
         function deleteColumn(el){
-            console.log(el)
+            deleteColumnInBdd(el.parentElement.parentElement.getAttribute('data-id'));
         }
 
-        function deleteColumnInBdd(board, title, elementId){
-            fetch(`/retro/updateCard/${elementId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    column_id: Number(board.getAttribute('data-order')),
-                    name: title,
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Column mis a jour:', data);
+        function deleteColumnInBdd(columnId) {
+            Swal.fire({
+                title: "Voulez-vous vraiment supprimer cette colonne ?",
+                showDenyButton: true,
+                confirmButtonText: "Oui, supprimer",
+                denyButtonText: `Annuler`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const id = columnId.split('-').pop();
 
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                    fetch(`/retro/deleteCard/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data.message);
+                            kanban.removeBoard(columnId);
+                            Swal.fire("Supprimé !", "", "success");
+                        })
+                        .catch(error => {
+                            console.error('Erreur lors de la suppression :', error);
+                            Swal.fire("Erreur lors de la suppression", "", "error");
+                        });
+
+                } else if (result.isDenied) {
+                    Swal.fire("Suppression annulée", "", "info");
+                }
+            });
         }
+
 
         function createColumn(id, title){
             kanban.addBoards([
@@ -144,7 +156,7 @@
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
                 body: JSON.stringify({
-                    column_id: Number(board.getAttribute('data-order')),
+                    column_id: Number(board.getAttribute('data-id').split('-').pop()),
                     name: title,
                 })
             })
