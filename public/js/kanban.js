@@ -8,16 +8,16 @@ const {
 
 const kanban = new jKanban({
     element: '#dd',
-    gutter: '15px',
-    widthBoard: '250px',
+    gutter: '0px',
+    widthBoard: 'auto',
     responsivePercentage: false,
     dragItems: true,
     boards: retro,
     dragBoards: false,
     itemAddOptions: {
         enabled: true,
-        content: '+',
-        class: 'kanban-title-button btn btn-default btn-xs',
+        content: '+ Ajouter une carte',
+        class: 'kanban-title-button w-full justify-start flex !text-sm !font-medium rounded-lg px-2 py-2 hover:!bg-gray-300/70 duration-300',
         footer: true
     },
     itemHandleOptions: {
@@ -28,7 +28,8 @@ const kanban = new jKanban({
         customHandler: "<span class='item_handle'>+</span> %title%"
     },
     click: function (el) {
-        console.log("retro id : " + retroId);
+        let elementId = parseInt(el.getAttribute('data-eid').match(/\d+$/)[0]);
+        updateCardNameToDB(el.textContent, elementId, el);
     },
     dropEl: function (el, target) {
         let elementId = parseInt(el.getAttribute('data-eid').match(/\d+$/)[0]);
@@ -39,24 +40,6 @@ const kanban = new jKanban({
     },
     propagationHandlers: []
 });
-
-function createItem(id, title, boardId) {
-    const itemId = "item-id-" + id;
-    const itemHtml = `
-        <div class="kanban-item" data-eid="${itemId}" data-username="username">
-            ${title}
-        </div>
-    `;
-
-    const parent = document.querySelector(`[data-id="${boardId}"]`);
-    const kanbanDrag = parent.querySelector('.kanban-drag');
-
-    if (kanbanDrag) {
-        kanbanDrag.innerHTML += itemHtml;
-    } else {
-        console.log("Élément 'kanban-drag' introuvable dans le parent.");
-    }
-}
 
 function deleteColumn(el) {
     deleteColumnInBdd(el.parentElement.parentElement.getAttribute('data-id'));
@@ -72,7 +55,7 @@ function deleteColumnInBdd(columnId) {
         if (result.isConfirmed) {
             const id = columnId.split('-').pop();
 
-            fetch(`/retro/deleteCard/${id}`, {
+            fetch(`/retro/column/delete/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': csrfToken
@@ -104,16 +87,62 @@ function createColumn(id, title) {
     ]);
 }
 
+function createCard(boardId, text){
+        kanban.addElement(boardId, {
+            title: text,
+        });
+}
+
 function addElement(boardId) {
     addCardToDB(boardId);
 }
 
-function addBoard() {
-    addColumnToDB();
+
+function updateCardNameToDB(oldTitle, elementId, el) {
+    Swal.fire({
+        title: 'Modifier la carte',
+        input: 'text',
+        inputLabel: 'Nouveau titre de la carte',
+        inputValue: oldTitle,
+        showCancelButton: true,
+        confirmButtonText: 'Mettre à jour',
+        cancelButtonText: 'Annuler',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Le titre ne peut pas être vide !';
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const newTitle = result.value;
+
+            fetch(`/retro/card/update/name/${elementId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken
+                },
+                body: JSON.stringify({
+                    name: newTitle
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Carte mise à jour :', data);
+                    Swal.fire('Carte mise à jour !', '', 'success');
+                    el.textContent = result.value;
+                })
+                .catch(error => {
+                    console.error('Erreur :', error);
+                    Swal.fire('Erreur lors de la mise à jour', '', 'error');
+                });
+        }
+    });
 }
 
+
 function updateCardToDB(board, title, elementId) {
-    fetch(`/retro/updateCard/${elementId}`, {
+    fetch(`/retro/card/update/${elementId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -166,13 +195,27 @@ function addColumnToDB() {
                 .then(data => {
                     console.log('Colonne ajoutée :', data);
                     createColumn(data.id, data.name);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Colonne créée',
+                        text: `La colonne "${data.name}" a bien été ajoutée.`,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
                 })
                 .catch(error => {
                     console.error('Erreur :', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erreur',
+                        text: 'Une erreur est survenue lors de la création de la colonne.',
+                    });
                 });
         }
     });
 }
+
 
 function addCardToDB(boardId) {
     Swal.fire({
@@ -208,7 +251,7 @@ function addCardToDB(boardId) {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Carte ajoutée :', data);
-                    createItem(data.id, data.name, boardId);
+                    createCard(boardId, data.name)
                 })
                 .catch(error => {
                     console.error('Erreur :', error);

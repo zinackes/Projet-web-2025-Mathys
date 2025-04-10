@@ -12,9 +12,12 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class RetroController extends Controller
 {
+
+    use AuthorizesRequests;
     /**
      * Show the list of retrospectives for the user's cohort.
      *
@@ -62,6 +65,7 @@ class RetroController extends Controller
 
     public function store(Request $request) {
 
+        $this->authorize('create', Retros::class);
 
         $request->validate([
             'name' => 'required|string',
@@ -81,22 +85,6 @@ class RetroController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Retro added!');
-    }
-
-
-    public function column(Request $request) {
-
-        $request->validate([
-            'retro_id' => 'required|integer',
-            'name' => 'required|string',
-        ]);
-
-        $column = RetrosColumns::create([
-            'retro_id' => $request['retro_id'],
-            'name' => $request['name'],
-        ]);
-
-        return response()->json($column, 201);
     }
 
     public function card(Request $request) {
@@ -120,28 +108,37 @@ class RetroController extends Controller
 
     public function updateCard(Request $request, $id) {
 
-        $request->validate([
-            'column_id' => 'required|integer',
-            'name' => 'required|string',
-        ]);
+
+        $this->authorize('update', Retros::class);
 
         $card = RetrosColumnsCards::findOrFail($id);
 
-        $card->update([
-            'column_id' => $request['column_id'],
-            'name' => $request['name'],
-        ]);
+
+        if($request['column_id']){
+            $request->validate([
+                'column_id' => 'required|integer',
+                'name' => 'required|string',
+            ]);
+
+
+            $card->update([
+                'column_id' => $request['column_id'],
+                'name' => $request['name'],
+            ]);
+        }
+        else if (!$request['column_id']){
+            $request->validate([
+                'name' => 'required|string',
+            ]);
+
+
+            $card->update([
+                'name' => $request['name'],
+            ]);
+        }
+
 
         return response()->json(['message' => 'Column updated successfully', 'column' => $card]);
-    }
-
-    public function deleteCard($id) {
-
-
-        $column = RetrosColumns::findOrFail($id);
-        $column->delete();
-
-        return response()->json(['message' => 'Colonne supprimée avec succès.'], 200);
     }
 
 

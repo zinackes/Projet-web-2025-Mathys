@@ -1,7 +1,9 @@
 .kanban-container {
-  position: relative;
+    position: relative;
   box-sizing: border-box;
-  width: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .kanban-container * {
@@ -17,7 +19,7 @@
 .kanban-board {
   position: relative;
   float: left;
-  background: #e2e4e6;
+    background-color: #f1f2f4 !important;
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
@@ -36,7 +38,7 @@
 
 .kanban-board header {
   font-size: 16px;
-  padding: 15px;
+  padding: 10px 15px 0 15px;
     display: flex;
     justify-content: space-between;
 }
@@ -53,8 +55,10 @@
 }
 
 .kanban-board .kanban-drag {
-  min-height: 200px;
-  padding: 20px;
+    padding: 15px 7.5px 0 7.5px;
+    display: flex;
+    flex-direction: column;
+    gap: 7.5px;
 }
 
 .kanban-board:after {
@@ -65,9 +69,14 @@
 
 .kanban-item {
   background: #fff;
-  padding: 15px;
-  margin-bottom: 20px;
+  padding: 10px;
+    width: 100%;
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+
+    white-space: wrap;
+    text-overflow: ellipsis;
+    cursor: pointer !important;
 }
 
 .kanban-item:hover {

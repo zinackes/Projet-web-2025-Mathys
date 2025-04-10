@@ -194,7 +194,7 @@ var dragula = require('dragula');
         '[data-id="' + boardID + '"] .kanban-drag'
       )
       var nodeItem = document.createElement('div')
-      nodeItem.classList.add('kanban-item')
+        nodeItem.classList.add('kanban-item', 'rounded-lg', "text-md", 'text-gray-700', 'shadow-lg',)
       if (typeof element.id !== 'undefined' && element.id !== '') {
         nodeItem.setAttribute('data-eid', element.id)
       }
@@ -253,30 +253,12 @@ var dragula = require('dragula');
           self.options.boards.push(board)
         }
 
-        if (!self.options.responsivePercentage) {
-          //add width to container
-          if (self.container.style.width === '') {
-            self.container.style.width =
-              parseInt(boardWidth) + parseInt(self.options.gutter) * 2 + 'px'
-          } else {
-            self.container.style.width =
-              parseInt(self.container.style.width) +
-              parseInt(boardWidth) +
-              parseInt(self.options.gutter) * 2 +
-              'px'
-          }
-        }
         //create node
         var boardNode = document.createElement('div')
         boardNode.dataset.id = board.id
         boardNode.dataset.order = self.container.childNodes.length + 1
-        boardNode.classList.add('kanban-board')
+        boardNode.classList.add('kanban-board', 'rounded-xl', 'border', 'border-gray-300', 'shadow-md', 'w-[32%]')
         //set style
-        if (self.options.responsivePercentage) {
-          boardNode.style.width = boardWidth + '%'
-        } else {
-          boardNode.style.width = boardWidth
-        }
         boardNode.style.marginLeft = self.options.gutter
         boardNode.style.marginRight = self.options.gutter
         // header board
@@ -293,7 +275,8 @@ var dragula = require('dragula');
           let canDelete = window.retroData;
           headerBoard.innerHTML = `
   <div class="kanban-title-board">${board.title}</div>
-  ${canDelete ? '<button onclick="deleteColumn(this)" class="ml-auto"><i class="ki-filled ki-trash"></i></button>' : ''}
+  ${canDelete ? '<button onclick="deleteColumn(this)" class="ml-auto group">' +
+              '<i class="ki-filled ki-trash group-hover:text-red-500 duratiion-300"></i></button>' : ''}
 `;
         //content board
         var contentBoard = document.createElement('main')
@@ -310,7 +293,7 @@ var dragula = require('dragula');
           //create item
           var itemKanban = board.item[itemkey]
           var nodeItem = document.createElement('div')
-          nodeItem.classList.add('kanban-item')
+          nodeItem.classList.add('kanban-item', 'rounded-lg', "text-md", 'text-gray-700', 'shadow-lg')
           if (itemKanban.id) {
             nodeItem.dataset.eid = itemKanban.id
           }
@@ -335,6 +318,7 @@ var dragula = require('dragula');
         }
         //footer board
         var footerBoard = document.createElement('footer')
+          footerBoard.classList.add('my-2', 'px-2')
         // if add button is true, add button to the board
         if (addButton) {
           var btn = document.createElement('BUTTON')
@@ -469,7 +453,7 @@ var dragula = require('dragula');
       self.element = document.querySelector(self.options.element)
       //create container
       var boardContainer = document.createElement('div')
-      boardContainer.classList.add('kanban-container')
+      boardContainer.classList.add('kanban-container', )
       self.container = boardContainer
       //add boards
 

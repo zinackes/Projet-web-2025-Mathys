@@ -3,10 +3,9 @@
 namespace App\Policies;
 
 use App\Models\Cohort;
-use App\Models\Retros;
 use App\Models\User;
 
-class RetroPolicy
+class RetroColumnPolicy
 {
     /**
      * Determine whether the user can view any models.

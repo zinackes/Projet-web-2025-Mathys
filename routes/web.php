@@ -11,6 +11,8 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TeacherController;
 use App\Services\MistralService;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RetroColumnController;
+
 
 // Redirect the root path to /dashboard
 Route::redirect('/', 'dashboard');
@@ -49,11 +51,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/retro/{cohortId}/{retroId}', [RetroController::class, 'show'])->name('retro.show');
         Route::post('/retro/create', [RetroController::class, 'store'])->name('retro.store');
 
-        Route::put('/retro/updateCard/{id}', [RetroController::class, 'updateCard'])->name('retro.updateCard');
-        Route::delete('/retro/deleteCard/{id}', [RetroController::class, 'deleteCard'])->name('retro.deleteCard');
+        // Retro column
+        Route::delete('/retro/column/delete/{id}', [RetroColumnController::class, 'delete'])->name('retroColumn.deleteCard');
+        Route::post('/retro/column', [RetroColumnController::class, 'store'])->name('retroColumn.store');
 
-        Route::post('/retro/column', [RetroController::class, 'column'])->name('retro.column');
+        // Retro Card
         Route::post('/retro/card', [RetroController::class, 'card'])->name('retro.card');
+        Route::put('/retro/card/update/{id}', [RetroController::class, 'updateCard'])->name('retro.updateCard');
+        Route::put('/retro/card/update/name/{id}', [RetroController::class, 'updateCard'])->name('retro.updateCardName');
 
         // Common life
         Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');

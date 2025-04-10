@@ -9,7 +9,7 @@
 
     <div id="dd"></div>
 
-    <button onclick="addBoard()" class="bg-blue-500 text-white px-2 py-1 rounded">
+    <button onclick="addColumnToDB()" class="bg-blue-500 text-white px-2 py-1 rounded">
         Add Column
     </button>
 

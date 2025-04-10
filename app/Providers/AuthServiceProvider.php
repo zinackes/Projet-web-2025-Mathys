@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Retros;
+use App\Models\RetrosColumns;
+use App\Policies\RetroColumnPolicy;
 use App\Policies\RetroPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -23,5 +25,6 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Retros::class, RetroPolicy::class);
+        Gate::policy(RetrosColumns::class, RetroColumnPolicy::class);
     }
 }
