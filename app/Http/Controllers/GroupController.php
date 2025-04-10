@@ -156,6 +156,7 @@ Répondez **uniquement** avec un JSON strictement conforme à cette structure :
 
         $responseText = $mistral->generateText($prompt);
 
+
         if (preg_match('/```json(.*?)```/s', $responseText, $matches)) {
             $jsonString = trim($matches[1]);
         } else {

@@ -15,4 +15,9 @@ class RetrosColumns extends Model
     public function cards(){
         return $this->hasMany('App\Models\RetrosColumnsCards', 'column_id');
     }
+
+    protected $fillable = [
+        'retro_id',
+        'name'
+    ];
 }

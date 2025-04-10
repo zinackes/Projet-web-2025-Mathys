@@ -12,5 +12,12 @@ class RetrosColumnsCards extends Model
         return $this->belongsTo(RetrosColumns::class);
     }
 
+    protected $fillable = [
+        'retro_id',
+        'column_id',
+        'user_id',
+        'name'
+    ];
+
 
 }

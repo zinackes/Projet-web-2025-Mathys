@@ -46,7 +46,13 @@ Route::middleware('auth')->group(function () {
 
         // Retro
         route::get('retros', [RetroController::class, 'index'])->name('retro.index');
-        Route::get('/retro/{cohortId}', [RetroController::class, 'show'])->name('retro.show');
+        Route::get('/retro/{cohortId}/{retroId}', [RetroController::class, 'show'])->name('retro.show');
+        Route::post('/retro/create', [RetroController::class, 'store'])->name('retro.store');
+
+        Route::get('/retro/getBoard', [RetroController::class, 'getBoard'])->name('retro.getBoard');
+
+        Route::post('/retro/column', [RetroController::class, 'column'])->name('retro.column');
+        Route::post('/retro/card', [RetroController::class, 'card'])->name('retro.card');
 
         // Common life
         Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');

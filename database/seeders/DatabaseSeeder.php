@@ -154,8 +154,21 @@ class DatabaseSeeder extends Seeder
             'end_date' => \Carbon\Carbon::create(2025),
         ]);
 
+        $cohort2 = Cohort::create([
+            'school_id' => $school->id,
+            'name'      => 'Promotion B2',
+            'description' => 'Cergy',
+            'start_date' => \Carbon\Carbon::create(2024),
+            'end_date' => \Carbon\Carbon::create(2025),
+        ]);
+
         UserCohort::create([
-            'user_id'   => $user->id,
+            'user_id'   => $admin->id,
+            'cohort_id' => $school->id,
+        ]);
+
+        UserCohort::create([
+            'user_id'   => $teacher->id,
             'cohort_id' => $school->id,
         ]);
 

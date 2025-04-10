@@ -19,4 +19,13 @@ class Retros extends Model
     public function user(){
         return $this->belongsTo('App\Models\User');
     }
+
+    protected $fillable = [
+        'name',
+        'cohort_id',
+        'user_id',
+        'description',
+        'start_date',
+        'end_date',
+    ];
 }
