@@ -9,7 +9,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\KnowledgeController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TeacherController;
-use App\Services\MistralService;
+use App\Services\GeminiService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RetroColumnController;
 
@@ -70,7 +70,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
-Route::get('/mistral-test', function (MistralService $mistral) {
+Route::get('/mistral-test', function (GeminiService $mistral) {
     $prompt = "Explique moi le Big Bang simplement.";
     $result = $mistral->generateText($prompt);
     return nl2br(e($result));

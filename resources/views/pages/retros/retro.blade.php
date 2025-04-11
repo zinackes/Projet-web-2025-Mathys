@@ -10,7 +10,7 @@
 
     <div id="dd"></div>
 
-    <button onclick="addColumnToDB()" class="!bg-gray-200/60 hover:!bg-gray-200 duration-300 !font-medium text-white px-4 flex justify-start items-center gap-1 py-2 rounded-lg text-md">
+    <button onclick="addColumnToDB()" class="!bg-gray-200/60 hover:!bg-gray-200 duration-300 !mt-10 !font-medium text-white px-4 flex justify-start items-center gap-1 py-2 rounded-lg text-md">
         <i class="ki-filled ki-plus"></i> Ajouter une colonne
     </button>
 

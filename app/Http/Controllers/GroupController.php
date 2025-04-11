@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\User;
 use App\Models\UserCohort;
 use App\Models\UserGroup;
+use App\Services\GeminiService;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -27,13 +28,18 @@ class GroupController extends Controller
         return view('pages.groups.index');
     }
 
-    public function generate(Request $request, MistralService $mistral)
+    public function generate(Request $request, GeminiService $gemini)
     {
         $cohortId = $request->cohort_id;
 
         $studentsInCohort = UserCohort::where('cohort_id', $cohortId)->get();
         $studentIds = $studentsInCohort->pluck('user_id');
-        $students = User::whereIn('id', $studentIds)->get();
+
+        // Get the students (excluding admin and teacher role
+        $students = User::whereIn('id', $studentIds)
+            ->get()
+            ->filter(fn($u) => optional($u->school())->pivot->role === 'student' || is_null(optional($u->school())->pivot->role));
+
 
         $studentsJson = json_encode($students->toArray(), JSON_PRETTY_PRINT);
 
@@ -154,7 +160,7 @@ Répondez **uniquement** avec un JSON strictement conforme à cette structure :
 ";
 
 
-        $responseText = $mistral->generateText($prompt);
+        $responseText = $gemini->generateText($prompt);
 
 
         if (preg_match('/```json(.*?)```/s', $responseText, $matches)) {

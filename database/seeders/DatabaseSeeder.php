@@ -146,6 +146,69 @@ class DatabaseSeeder extends Seeder
             'role'      => 'student',
         ]);
 
+        // Create the student role
+        UserSchool::create([
+            'user_id'   => $user2->id,
+            'school_id' => $school->id,
+            'role'      => 'student',
+        ]);
+
+        // Create the student role
+        UserSchool::create([
+            'user_id'   => $user3->id,
+            'school_id' => $school->id,
+            'role'      => 'student',
+        ]);
+
+        // Create the student role
+        UserSchool::create([
+            'user_id'   => $user4->id,
+            'school_id' => $school->id,
+            'role'      => 'student',
+        ]);
+
+        // Create the student role
+        UserSchool::create([
+            'user_id'   => $user5->id,
+            'school_id' => $school->id,
+            'role'      => 'student',
+        ]);
+
+        // Create the student role
+        UserSchool::create([
+            'user_id'   => $user6->id,
+            'school_id' => $school->id,
+            'role'      => 'student',
+        ]);
+
+        // Create the student role
+        UserSchool::create([
+            'user_id'   => $user7->id,
+            'school_id' => $school->id,
+            'role'      => 'student',
+        ]);
+
+        // Create the student role
+        UserSchool::create([
+            'user_id'   => $user8->id,
+            'school_id' => $school->id,
+            'role'      => 'student',
+        ]);
+
+        // Create the student role
+        UserSchool::create([
+            'user_id'   => $user9->id,
+            'school_id' => $school->id,
+            'role'      => 'student',
+        ]);
+
+        // Create the student role
+        UserSchool::create([
+            'user_id'   => $user10->id,
+            'school_id' => $school->id,
+            'role'      => 'student',
+        ]);
+
         $cohort = Cohort::create([
             'school_id' => $school->id,
             'name'      => 'Promotion B1',
