@@ -109,9 +109,9 @@ class RetroController extends Controller
     public function updateCard(Request $request, $id) {
 
 
-        $this->authorize('update', Retros::class);
-
         $card = RetrosColumnsCards::findOrFail($id);
+        $this->authorize('update', $card);
+
 
 
         if($request['column_id']){
@@ -148,9 +148,10 @@ class RetroController extends Controller
      * @param int $cohortId The cohort ID
      * @return Factory|View|Application|object
      */
-    public function show($retroId, $cohortId) {
+    public function show($cohortId, $retroId) {
 
         $cohort = Cohort::with('retros')->find($cohortId);
+
 
         // Vérifie si le cohort et les rétros existent
         if ($cohort && $cohort->retros->isNotEmpty()) {

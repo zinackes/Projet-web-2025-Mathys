@@ -19,5 +19,11 @@ class RetrosColumnsCards extends Model
         'name'
     ];
 
+    public function card(){
+        return $this->belongsToMany(Retros::class, 'retros')
+            ->withPivot('user_id')
+            ->get();
+    }
+
 
 }

@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Models\Retros;
 use App\Models\RetrosColumns;
+use App\Models\RetrosColumnsCards;
+use App\Policies\RetroColCardPolicy;
 use App\Policies\RetroColumnPolicy;
 use App\Policies\RetroPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -26,5 +28,6 @@ class AuthServiceProvider extends ServiceProvider
     {
         Gate::policy(Retros::class, RetroPolicy::class);
         Gate::policy(RetrosColumns::class, RetroColumnPolicy::class);
+        Gate::policy(RetrosColumnsCards::class, RetroColCardPolicy::class);
     }
 }

@@ -87,9 +87,10 @@ function createColumn(id, title) {
     ]);
 }
 
-function createCard(boardId, text){
+function createCard(boardId, text, id){
         kanban.addElement(boardId, {
             title: text,
+            id: 'item-id-' + id
         });
 }
 
@@ -251,7 +252,7 @@ function addCardToDB(boardId) {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Carte ajoutée :', data);
-                    createCard(boardId, data.name)
+                    createCard(boardId, data.name, data.id)
                 })
                 .catch(error => {
                     console.error('Erreur :', error);

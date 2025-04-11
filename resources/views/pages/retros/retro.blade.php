@@ -1,16 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="flex items-center gap-1 text-sm font-normal">
-            <span class="text-gray-700">
-                {{ __('Retrospectives') }}
-            </span>
-        </h1>
+        <a href={{route('retro.index')}}>
+            <div class="bg-gray-200/60 px-2 py-1 rounded-xl flex gap-2 items-center text-md hover:!bg-gray-300 duration-300 cursor-pointer">
+                <i class="ki-filled ki-left"></i>
+                Revenir
+            </div>
+        </a>
     </x-slot>
 
     <div id="dd"></div>
 
-    <button onclick="addColumnToDB()" class="bg-blue-500 text-white px-2 py-1 rounded">
-        Add Column
+    <button onclick="addColumnToDB()" class="!bg-gray-200/60 hover:!bg-gray-200 duration-300 !font-medium text-white px-4 flex justify-start items-center gap-1 py-2 rounded-lg text-md">
+        <i class="ki-filled ki-plus"></i> Ajouter une colonne
     </button>
 
 

@@ -122,8 +122,9 @@
                                                         <i class="ki-filled ki-paper-plane cursor-not-allowed"></i>
                                                     @else
                                                         <a class="group" href={{route("retro.show",
-                                                                    ['retroId' => $retro->id,
-                                                                     'cohortId' => $retro->cohort_id
+                                                                    [
+                                                                     'cohortId' => $retro->cohort_id,
+                                                                     'retroId' => $retro->id,
                                                                     ])}}>
                                                             <i class="ki-filled ki-paper-plane group-hover:text-primary duration-300"></i>
                                                         </a>

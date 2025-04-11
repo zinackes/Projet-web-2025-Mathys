@@ -4,9 +4,10 @@ namespace App\Policies;
 
 use App\Models\Cohort;
 use App\Models\RetrosColumns;
+use App\Models\RetrosColumnsCards;
 use App\Models\User;
 
-class RetroColumnPolicy
+class RetroColCardPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -17,27 +18,19 @@ class RetroColumnPolicy
     }
 
     /**
-     * Determine whether the user can view the form.
-     */
-    public function viewForm(User $user): bool
-    {
-        return in_array($user->school()->pivot->role, ['admin', 'teacher']);
-    }
-
-    /**
      * Determine whether the user can create models.
      */
     public function create(User $user): bool
     {
-        return in_array($user->school()->pivot->role, ['admin', 'teacher']);
+        return true;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user): bool
+    public function update(User $user, RetrosColumnsCards $retrosColumnsCards): bool
     {
-        return in_array($user->school()->pivot->role, ['admin', 'teacher']);
+        return $user->id === $retrosColumnsCards->retro_id || in_array($user->school()->pivot->role, ['admin', 'teacher']);
     }
 
     /**
