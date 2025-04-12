@@ -16604,6 +16604,9 @@ function initializeKanban(data) {
       var elementId = parseInt(el.getAttribute('data-eid').match(/\d+$/)[0]);
       updateCardNameToDB(el.textContent, elementId, el);
     },
+    context: function context(el, event) {
+      console.log(el, event);
+    },
     dropEl: function dropEl(el, target) {
       var elementId = parseInt(el.getAttribute('data-eid').match(/\d+$/)[0]);
       updateCardToDB(target.parentElement, el.textContent, elementId);

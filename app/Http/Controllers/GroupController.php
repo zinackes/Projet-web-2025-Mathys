@@ -13,19 +13,70 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Http;
-use App\Services\MistralService;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Date;
 
 class GroupController extends Controller
 {
+
+
     /**
      * Display the page
      *
      * @return Factory|View|Application|object
      */
     public function index() {
-        return view('pages.groups.index');
+
+        $userId= auth()->user()->id;
+        $userCohort = UserCohort::where('user_id', $userId)->first();
+
+
+        /*$studentsInCohort = UserCohort::where('cohort_id', $userCohort->cohort_id)->get();
+        $studentIds = $studentsInCohort->pluck('user_id');
+
+        $studentsGroups = UserGroup::whereIn('user_id', $studentIds)->get();*/
+
+
+        if(auth()->user()->school()->pivot->role === "admin"){
+
+            $uniqueGroupIds = Group::selectRaw('MIN(id) as id')
+                ->groupBy('project_name')
+                ->pluck('id');
+
+
+            $groups = Group::whereIn('id', $uniqueGroupIds)->get();
+        }
+        else{
+
+            $cohortId = $userCohort->cohort_id;
+
+            $uniqueGroupIds = Group::where('cohort_id', $cohortId)
+                ->selectRaw('MIN(id) as id')
+                ->groupBy('project_name')
+                ->pluck('id');
+
+            $groups = Group::whereIn('id', $uniqueGroupIds)->get();
+
+            dd($groups);
+        }
+
+        return view('pages.groups.index', [
+            'groups' => $groups
+        ]);
+    }
+
+
+    public function show($project_name) {
+
+        $decryptedName = Crypt::decryptString($project_name);
+
+        $groups = Group::where('project_name', $decryptedName)->get();
+
+        return view('pages.groups.show', [
+
+        ]);
+
     }
 
     public function generate(Request $request, GeminiService $gemini)

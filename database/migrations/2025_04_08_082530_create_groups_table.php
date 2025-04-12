@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->UnsignedBigInteger('user_id'); // Use who created the groups
+            $table->UnsignedBigInteger('cohort_id'); // Cohort which the group is from
             $table->string('group_name');
             $table->string('project_name');
             $table->string('description');
@@ -22,6 +23,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')
+                ->onDelete('cascade');
+            $table->foreign('cohort_id')->references('id')->on('cohorts')
                 ->onDelete('cascade');
         });
     }

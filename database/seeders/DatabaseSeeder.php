@@ -283,6 +283,7 @@ class DatabaseSeeder extends Seeder
 
         $group1 = Group::create([
             'user_id'   => $user->id,
+            'cohort_id' => $cohort->id,
             'group_name' => 'Groupe 1',
             'project_name' => "Memory",
             'description' => "lalala",
@@ -292,6 +293,7 @@ class DatabaseSeeder extends Seeder
 
         $group2 = Group::create([
             'user_id'   => $user->id,
+            'cohort_id' => $cohort->id,
             'group_name' => 'Groupe 2',
             'project_name' => "Memory",
             'description' => "lalala",
