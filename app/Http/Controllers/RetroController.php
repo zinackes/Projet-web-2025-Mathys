@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\RetroUpdated;
 use App\Models\Retros;
 use App\Models\Cohort;
 use App\Models\RetrosColumns;
@@ -43,10 +44,9 @@ class RetroController extends Controller
         else{
             // Get the user's cohort ID
             $cohortId = UserCohort::where('user_id', auth()->user()->id)->first();
-            dd($cohortId);
 
             // Get retros for this cohort
-            $retros = Retros::where('cohort_id', $cohortId)->get();
+            $retros = Retros::where('cohort_id', $cohortId->cohort_id)->get();
 
             $cohorts = 0;
         }
@@ -121,7 +121,7 @@ class RetroController extends Controller
             ]);
 
 
-            $card->update([
+            $update = $card->update([
                 'column_id' => $request['column_id'],
                 'name' => $request['name'],
             ]);
@@ -132,14 +132,61 @@ class RetroController extends Controller
             ]);
 
 
-            $card->update([
+            $update = $card->update([
                 'name' => $request['name'],
             ]);
         }
 
+        event(new RetroUpdated($update));
+
 
         return response()->json(['message' => 'Column updated successfully', 'column' => $card]);
     }
+
+
+    public function fetchdata($cohortId, $retroId) {
+        $cohort = Cohort::with('retros')->find($cohortId);
+
+        $userId = auth()->user()->id;
+
+        if ($cohort && $cohort->retros->isNotEmpty()) {
+            $retro = $cohort->retros->where('id', $retroId)->first();
+
+            if ($retro) {
+                $retro->load('columns');
+                $response = [];
+
+                if ($retro->columns->isNotEmpty()) {
+                    foreach ($retro->columns as $column) {
+                        $columnData = [
+                            'id' => 'column-id-' . $column->id,
+                            'title' => $column->name,
+                            'item' => [],
+                        ];
+
+                        foreach ($column->cards as $card) {
+                            $columnData['item'][] = [
+                                'id' => 'item-id-' . $card->id,
+                                'title' => $card->name,
+                                'username' => $card->name
+                            ];
+                        }
+
+                        $response[] = $columnData;
+                    }
+                }
+
+                return response()->json([
+                    'response' => $response,
+                    'cohortId' => $cohortId,
+                    'userId' => $userId,
+                ]);
+            }
+        }
+
+        return response()->json(['message' => 'Retro ou Cohort non trouvé'], 404);
+    }
+
 
 
     /**
@@ -148,7 +195,10 @@ class RetroController extends Controller
      * @param int $cohortId The cohort ID
      * @return Factory|View|Application|object
      */
-    public function show($cohortId, $retroId) {
+    public function show(Request $request) {
+
+        $cohortId = $request->query('cohortId');
+        $retroId = $request->query('retroId');
 
         $cohort = Cohort::with('retros')->find($cohortId);
 
@@ -196,6 +246,8 @@ class RetroController extends Controller
                     'cohort' => $cohort,
                     'retroId' => $retroId,
                     'cohortId' => $cohortId,
+                    'pusherAppKey' => env('PUSHER_APP_KEY'),
+                    'pusherAppCluster' => env('PUSHER_APP_CLUSTER'),
                 ]);
             }
         }

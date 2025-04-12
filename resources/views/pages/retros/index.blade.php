@@ -7,7 +7,10 @@
         </h1>
     </x-slot>
 
-    <div class="grid lg:grid-cols-3 gap-3 lg:gap-5 items-stretch">
+    <div class="grid
+    @can('viewForm', \App\Models\Retros::class)
+    lg:grid-cols-3 gap-3 lg:gap-5 items-stretch
+    @endcan">
         <div class="lg:col-span-2">
                 <div class="grid">
                     <div class="card card-grid min-w-full">

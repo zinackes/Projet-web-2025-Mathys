@@ -272,7 +272,7 @@ var dragula = require('dragula');
           value = value.replace(/^[ ]+/g, '')
           headerBoard.classList.add(value)
         })
-          let canDelete = window.retroData;
+          let canDelete = window.canDelete;
           headerBoard.innerHTML = `
   <div class="kanban-title-board">${board.title}</div>
   ${canDelete ? '<button onclick="deleteColumn(this)" class="ml-auto group">' +

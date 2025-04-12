@@ -17,19 +17,8 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-
     <script>
-        window.retroData = {
-            retro: @json($retro),
-            retroId: @json($TheRetro->id),
-            userId: @json(auth()->user()->id),
-            canDeleteColumn: @json(auth()->user()->can('viewForm', \App\Models\Retros::class)),
-            csrfToken: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-        };
+        window.canDelete = @json(Auth::user()->can('viewForm', \App\Models\Retros::class));
     </script>
-
-    <script src="{{ asset('kanban/dist/jkanban.js') }}"></script>
-    <script src="sweetalert2.all.min.js"></script>
-    <script src="{{asset('js/kanban.js')}}"></script>
 
 </x-app-layout>

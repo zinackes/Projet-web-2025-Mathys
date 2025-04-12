@@ -12,6 +12,7 @@ use App\Http\Controllers\TeacherController;
 use App\Services\GeminiService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RetroColumnController;
+use Illuminate\Support\Facades\Broadcast;
 
 
 // Redirect the root path to /dashboard
@@ -48,7 +49,7 @@ Route::middleware('auth')->group(function () {
 
         // Retro
         route::get('retros', [RetroController::class, 'index'])->name('retro.index');
-        Route::get('/retro/{cohortId}/{retroId}', [RetroController::class, 'show'])->name('retro.show');
+        Route::get('/retro/', [RetroController::class, 'show'])->name('retro.show');
         Route::post('/retro/create', [RetroController::class, 'store'])->name('retro.store');
 
         // Retro column
@@ -64,10 +65,17 @@ Route::middleware('auth')->group(function () {
         Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');
 
 
+        Route::get('/retro/fetchdata/{cohortId}/{retroId}', [RetroController::class, 'fetchdata'])->name('retro.fetchdata');
+
+
 
         Route::get('/prompt-result', [GroupController::class, 'promptResult'])->name('prompt.result');
     });
 
+});
+
+Broadcast::channel('Retro-Channel', function () {
+    return true;
 });
 
 Route::get('/mistral-test', function (GeminiService $mistral) {
