@@ -57,8 +57,6 @@ class GroupController extends Controller
                 ->pluck('id');
 
             $groups = Group::whereIn('id', $uniqueGroupIds)->get();
-
-            dd($groups);
         }
 
         return view('pages.groups.index', [
@@ -72,9 +70,15 @@ class GroupController extends Controller
         $decryptedName = Crypt::decryptString($project_name);
 
         $groups = Group::where('project_name', $decryptedName)->get();
+        $groupsId = $groups->pluck('id');
+
+        $studentsByGroup = UserGroup::whereIn('group_id', $groupsId)
+            ->get()
+            ->groupBy('group_id');
 
         return view('pages.groups.show', [
-
+            'groups' => $groups,
+            'studentsByGroup' => $studentsByGroup
         ]);
 
     }
