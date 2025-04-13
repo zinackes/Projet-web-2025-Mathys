@@ -31,15 +31,15 @@
                             <tbody>
                             @foreach($studentsByGroup[$group->id] as $studentGroup)
                                 <tr>
-                                    <td class="w-[0px] !px-1">
+                                    <td class="w-[0px] !px-1 {{ $isInGroup ? '!border-green-300' : ''  }}">
                                         @if($studentGroup->role === "développeur")
                                             <i class="ki-filled ki-code"></i>
                                         @else
                                             <i class="ki-filled ki-crown text-warning text-md"></i>
                                         @endif
                                     </td>
-                                    <td class="!pl-2 text-md font-bold">{{ $studentGroup->user->last_name}} {{ $studentGroup->user->first_name}}</td>
-                                    <td>
+                                    <td class="!pl-2 text-md font-bold {{ $isInGroup ? '!border-green-300' : ''  }}">{{ $studentGroup->user->last_name}} {{ $studentGroup->user->first_name}}</td>
+                                    <td class="{{ $isInGroup ? '!border-green-300' : ''  }}">
                                         {{ $studentGroup->role}}
                                     </td>
                                 </tr>
