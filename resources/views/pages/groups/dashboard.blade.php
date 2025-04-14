@@ -36,77 +36,23 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <div class="flex">
+                    <div class="flex gap-2 items-start">
+                        <!-- Icône -->
                         <div class="px-1 py-1 flex items-center bg-gray-100/50 rounded-lg border !border-gray-300">
                             <i class="ki-filled ki-folder"></i>
                         </div>
-                        <span></span>
+
+                        <!-- Texte -->
+                        <div class="flex flex-col gap-2 mt-1">
+                            <span class="text-sm text-gray-700 leading-tight">Nom</span>
+                            <span class="text-sm font-semibold" id="github_repo_name">Chargement du nom...</span>
+                        </div>
                     </div>
                 </div>
             </div>
         @endif
     </div>
 
-    <script src="{{asset('js/githubApi.js')}}"></script>
-
-    <script type="module">
-        import { Octokit } from "https://esm.sh/octokit";
-
-        const octokit = new Octokit(); // Non authentifié (60 req/h)
-
-        async function getCommitsByUserPerDay(owner, repo) {
-            let page = 1;
-            let allCommits = [];
-            let hasMore = true;
-
-            while (hasMore) {
-                const res = await octokit.request('GET /repos/{owner}/{repo}/commits', {
-                    owner,
-                    repo,
-                    per_page: 100,
-                    page
-                });
-
-                const commits = res.data;
-                allCommits.push(...commits);
-                hasMore = commits.length === 100;
-                page++;
-            }
-
-            // Structure: { 'user': { 'YYYY-MM-DD': count } }
-            const grouped = {};
-
-            allCommits.forEach(commit => {
-                const date = new Date(commit.commit.author.date).toISOString().split('T')[0];
-                const author = commit.author?.login || commit.commit.author.name || 'Inconnu';
-
-                if (!grouped[author]) grouped[author] = {};
-                if (!grouped[author][date]) grouped[author][date] = 0;
-                grouped[author][date]++;
-            });
-
-            // Récupère toutes les dates triées (même celles manquantes chez certains users)
-            const allDates = Array.from(
-                new Set(allCommits.map(c => new Date(c.commit.author.date).toISOString().split('T')[0]))
-            ).sort();
-
-            // Convertir au format ApexCharts
-            const chartData = Object.entries(grouped).map(([user, commits]) => {
-                const data = allDates.map(date => {
-                    return [new Date(date).getTime(), commits[date] || 0];
-                });
-                return { name: user, data };
-            });
-
-            console.log(chartData); // 🔥 À utiliser dans ApexCharts
-            return chartData;
-        }
-
-        // 👉 Ton lien de repo (à adapter dynamiquement si besoin)
-        const repoUrl = "https://github.com/MathysSclafer/doctor-lib";
-        const [owner, repo] = new URL(repoUrl).pathname.slice(1).split('/');
-
-        window.chartData = getCommitsByUserPerDay(owner, repo);
-        </script>
+    <script type="module" src="{{asset('js/githubApi.js')}}"></script>
 
 </x-app-layout>

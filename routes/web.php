@@ -50,6 +50,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/group/{group_name}/dashboard', [GroupController::class, 'dashboard'])->name('group.dashboard');
         Route::post('group/updateGithub', [GroupController::class, 'updateGithub'])->name('group.updateGithub');
 
+        Route::get('/api/group-info/{id}', [GroupController::class, 'getInfo'])->name('group.info');
+
         // Retro
         route::get('retros', [RetroController::class, 'index'])->name('retro.index');
         Route::get('/retro/', [RetroController::class, 'show'])->name('retro.show');

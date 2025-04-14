@@ -66,14 +66,24 @@ class GroupController extends Controller
 
     public function dashboard($group_name, Request $request)
     {
-
         $group = Group::where('id', $request->group)->first();
 
 
         return view('pages.groups.dashboard',
         ['group' => $group,]
         );
+    }
 
+    public function getInfo($id)
+    {
+        $group = Group::find($id);
+
+
+        if (!$group) {
+            return response()->json(['error' => 'Group not found'], 404);
+        }
+
+        return response()->json($group);
     }
 
     public function updateGithub(Request $request) {
