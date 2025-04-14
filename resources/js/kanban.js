@@ -7,9 +7,32 @@ const retroId = params.get('retroId');
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-window.Echo.channel(`Retro-Channel`)
-    .listen('Retro.Updated', () => {
-        console.log('blabla');
+
+Echo.channel('Retro-Channel')
+    .listen('.Retro.Updated', (event) => {
+        const element = document.querySelector(`[data-eid="item-id-${event.retro.id}"]`);
+        element.textContent = event.retro.name;
+    });
+
+Echo.channel('Retro-Channel')
+    .listen('.Board.Create', (event) => {
+        createColumn(event.board.id, event.board.name);
+    });
+
+Echo.channel('Retro-Channel')
+    .listen('.Card.Create', (event) => {
+        createCard(Number(event.card.column_id), event.card.name, event.card.id);
+    });
+
+Echo.channel('Retro-Channel')
+    .listen('.Card.Move', (event) => {
+        console.log(event);
+        changeCardColumn(event.card.id, Number(event.card.column_id), event.card.name);
+    });
+
+Echo.channel('Retro-Channel')
+    .listen('.Board.Delete', (event) => {
+        deleteColumn(event.board.id);
     });
 
 fetch(`/retro/fetchdata/${cohortId}/${retroId}`, {
@@ -72,17 +95,25 @@ function initializeKanban(data) {
     });
 }
 
-function deleteColumn(el) {
+
+function changeCardColumn(cardId, columnId, text){
+    kanban.removeElement(`item-id-${cardId}`);
+    createCard(columnId, text, cardId);
+}
+
+function deleteColumn(boardId) {
     if (!kanban) {
         console.error("Kanban non initialisé !");
         return;
     }
-    deleteColumnInBdd(el.parentElement.parentElement.getAttribute('data-id'));
+    console.log("ID BOARD: " + boardId);
+    kanban.removeBoard(`column-id-${boardId}`);
 }
 
-window.deleteColumn = deleteColumn;
 
-function deleteColumnInBdd(columnId) {
+window.deleteColumnInBdd = deleteColumnInBdd;
+
+function deleteColumnInBdd(el) {
     Swal.fire({
         title: "Voulez-vous vraiment supprimer cette colonne ?",
         showDenyButton: true,
@@ -90,7 +121,7 @@ function deleteColumnInBdd(columnId) {
         denyButtonText: `Annuler`
     }).then((result) => {
         if (result.isConfirmed) {
-            const id = columnId.split('-').pop();
+            const id = el.parentElement.parentElement.getAttribute('data-id').split('-').pop();
 
             fetch(`/retro/column/delete/${id}`, {
                 method: 'DELETE',
@@ -101,7 +132,6 @@ function deleteColumnInBdd(columnId) {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data.message);
-                    kanban.removeBoard(columnId); // Utilisation de kanban ici
                     Swal.fire("Supprimé !", "", "success");
                 })
                 .catch(error => {
@@ -133,10 +163,12 @@ function createCard(boardId, text, id) {
         console.error("Kanban non initialisé !");
         return;
     }
-    kanban.addElement(boardId, {
-        title: text,
-        id: 'item-id-' + id
-    });
+    kanban.addElement(('column-id-' + boardId),
+        {
+            id: "item-id-" +id,
+            title: text
+        }
+    );
 }
 
 function addElement(boardId) {
@@ -175,7 +207,6 @@ function updateCardNameToDB(oldTitle, elementId, el) {
                 .then(data => {
                     console.log('Carte mise à jour :', data);
                     Swal.fire('Carte mise à jour !', '', 'success');
-                    el.textContent = result.value;
                 })
                 .catch(error => {
                     console.error('Erreur :', error);
@@ -242,7 +273,6 @@ window.addColumnToDB = function() {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Colonne ajoutée :', data);
-                    createColumn(data.id, data.name);
 
                     Swal.fire({
                         icon: 'success',
@@ -298,7 +328,6 @@ function addCardToDB(boardId) {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Carte ajoutée :', data);
-                    createCard(boardId, data.name, data.id)
                 })
                 .catch(error => {
                     console.error('Erreur :', error);

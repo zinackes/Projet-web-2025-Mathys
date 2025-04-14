@@ -75,7 +75,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
-Broadcast::channel('Retro-Channel', function () {
+Broadcast::channel('Retro-Channel', function ($user) {
     return true;
 });
 

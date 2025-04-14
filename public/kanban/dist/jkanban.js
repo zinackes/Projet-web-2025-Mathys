@@ -193,6 +193,7 @@ var dragula = require('dragula');
       var board = self.element.querySelector(
         '[data-id="' + boardID + '"] .kanban-drag'
       )
+        console.log(board);
       var nodeItem = document.createElement('div')
         nodeItem.classList.add('kanban-item', 'rounded-lg', "text-md", 'text-gray-700', 'shadow-lg',)
       if (typeof element.id !== 'undefined' && element.id !== '') {
@@ -214,6 +215,7 @@ var dragula = require('dragula');
       if (self.options.itemHandleOptions.enabled) {
         nodeItem.style.cursor = 'default'
       }
+      console.log(nodeItem);
       board.appendChild(nodeItem)
       return self
     }
@@ -275,7 +277,7 @@ var dragula = require('dragula');
           let canDelete = window.canDelete;
           headerBoard.innerHTML = `
   <div class="kanban-title-board">${board.title}</div>
-  ${canDelete ? '<button onclick="deleteColumn(this)" class="ml-auto group">' +
+  ${canDelete ? '<button onclick="deleteColumnInBdd(this)" class="ml-auto group">' +
               '<i class="ki-filled ki-trash group-hover:text-red-500 duratiion-300"></i></button>' : ''}
 `;
         //content board
