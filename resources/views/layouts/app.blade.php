@@ -13,9 +13,14 @@
     <link href="{{ asset('metronic/vendors/keenicons/styles.bundle.css') }}" rel="stylesheet"/>
     <link href="{{ asset('metronic/css/styles.css') }}" rel="stylesheet"/>
     <link href="{{ asset('kanban/dist/jkanban.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" href="{{asset('css/app.css')}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://kit.fontawesome.com/1e46e56962.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body class="antialiased flex h-full text-base text-gray-700 [--tw-page-bg:#F6F6F9] [--tw-page-bg-dark:var(--tw-coal-200)]
                 [--tw-content-bg:var(--tw-light)] [--tw-content-bg-dark:var(--tw-coal-500)]
@@ -92,6 +97,7 @@
 <script src="https://js.pusher.com/8.3.0/pusher.min.js"></script>
 <script src="{{ mix('js/echo.js') }}"></script>
 <script src="{{ asset('kanban/dist/jkanban.js') }}"></script>
+<script src="{{ asset('js/chart.js') }}"></script>
 <script src="{{ mix('js/app.js') }}"></script>
 <!-- End of Scripts -->
 </body>

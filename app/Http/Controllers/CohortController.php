@@ -46,25 +46,5 @@ class CohortController extends Controller
         ]);
     }
 
-    public function update(Request $request)
-    {
-        // Trouver le cohort ou échouer
-            $cohort = Cohort::findOrFail(1);
-
-        // Mise à jour du cohort
-        $cohort->update([
-            'name' => $request->name
-        ]);
-
-        // Diffuser l'événement avec les données mises à jour
-        event(new CohortUpdated($cohort));
-
-        // Retourner une réponse JSON
-        return response()->json([
-            'success' => true,
-            'cohort' => $cohort
-        ]);
-    }
-
 
 }

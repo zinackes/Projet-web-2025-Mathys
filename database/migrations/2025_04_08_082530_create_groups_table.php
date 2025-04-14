@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('description');
             $table->datetime('start_date');
             $table->datetime('end_date');
+            $table->string('github_link')->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')

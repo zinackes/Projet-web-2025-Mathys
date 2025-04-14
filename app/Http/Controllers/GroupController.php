@@ -26,9 +26,10 @@ class GroupController extends Controller
      *
      * @return Factory|View|Application|object
      */
-    public function index() {
+    public function index()
+    {
 
-        $userId= auth()->user()->id;
+        $userId = auth()->user()->id;
         $userCohort = UserCohort::where('user_id', $userId)->first();
 
 
@@ -38,7 +39,7 @@ class GroupController extends Controller
         $studentsGroups = UserGroup::whereIn('user_id', $studentIds)->get();*/
 
 
-        if(auth()->user()->school()->pivot->role === "admin"){
+        if (auth()->user()->school()->pivot->role === "admin") {
 
             $uniqueGroupIds = Group::selectRaw('MIN(id) as id')
                 ->groupBy('project_name')
@@ -46,8 +47,7 @@ class GroupController extends Controller
 
 
             $groups = Group::whereIn('id', $uniqueGroupIds)->get();
-        }
-        else{
+        } else {
 
             $cohortId = $userCohort->cohort_id;
 
@@ -62,6 +62,27 @@ class GroupController extends Controller
         return view('pages.groups.index', [
             'groups' => $groups
         ]);
+    }
+
+    public function dashboard($group_name, Request $request)
+    {
+
+        $group = Group::where('id', $request->group)->first();
+
+
+        return view('pages.groups.dashboard',
+        ['group' => $group,]
+        );
+
+    }
+
+    public function updateGithub(Request $request) {
+
+        Group::where('id', $request->group_id)->update([
+            'github_link' => $request->github_link,
+        ]);
+
+        return redirect()->back();
     }
 
 

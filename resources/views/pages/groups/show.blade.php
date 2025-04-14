@@ -2,7 +2,7 @@
     <x-slot name="header">
         <h1 class="flex items-center gap-1 text-sm font-normal">
             <span class="text-gray-700">
-                {{ __('Groupes') }}
+                {{ __('Liste des groupes pour le projet ') . $groups[0]->project_name }}
             </span>
         </h1>
     </x-slot>
@@ -21,8 +21,11 @@
                         </i>
                         <i class="ki-filled ki-up text-gray-600 text-2sm accordion-active:block hidden">
                         </i>
-                        <span class="text-base text-gray-900 font-medium">
+                        <span class="text-base text-gray-900 font-medium flex gap-3 items-center">
                 {{$group->group_name}}
+                                <span class="badge badge-pill badge-primary !px-2 !py-1 {{ $isInGroup ? 'badge-success' : ''  }}">
+                                    {{$studentsByGroup[$group->id]->count()}}
+                                </span>
                </span>
                     </button>
                     <div class="accordion-content rounded-lg px-3" id="accordion_1_content_{{ $group->id }}">
@@ -46,6 +49,22 @@
                             @endforeach
                             </tbody>
                         </table>
+                        <div class="my-2 flex items-center justify-evenly gap-4">
+                            <a href="" class="text-sm duration-400 hover:bg-green-500 rounded-lg px-3 py-1 hover:!text-white flex items-center gap-2">
+                                <i class="ki-filled ki-github"></i>
+                                Github
+                            </a>
+                            @if($isInGroup)
+                                <button
+                                    onclick="window.location.href='{{ route('group.dashboard', ['group' => $group, 'group_name' => $group->group_name]) }}'"
+
+                                    class="text-sm duration-400 hover:!bg-green-500 rounded-lg px-3 py-1 hover:!text-white flex items-center gap-2"
+                                >
+                                    <i class="ki-filled ki-abstract-28"></i>
+                                    Dashboard
+                                </button>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
