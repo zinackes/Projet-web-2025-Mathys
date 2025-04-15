@@ -115,7 +115,7 @@ class RetroController extends Controller
             'name' => $request['name'],
         ]);
 
-        event(new CardCreate($card));
+        broadcast(new CardCreate($card))->toOthers();
 
         return response()->json($card, 201);
     }
@@ -147,7 +147,7 @@ class RetroController extends Controller
                 'name' => $request['name'],
             ]);
 
-            event(new CardMove($card));
+            broadcast(new CardMove($card))->toOthers();
         }
         else if (!$request['column_id']){
 

@@ -32,7 +32,7 @@ class RetroColumnController extends Controller
         ]);
 
         // send event to pusher
-        event(new BoardCreate($column));
+        broadcast(new BoardCreate($column))->toOthers();
 
         return response()->json($column, 201);
     }
@@ -56,7 +56,7 @@ class RetroColumnController extends Controller
             'retro_id' => $column->retro_id,
         ];
 
-        event(new ColumnDelete($columnData));
+        broadcast(new ColumnDelete($columnData))->toOthers();
         $column->delete();
 
         return response()->json(['message' => 'Colonne supprimée avec succès.'], 200);

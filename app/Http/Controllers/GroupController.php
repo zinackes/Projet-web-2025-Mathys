@@ -169,7 +169,7 @@ class GroupController extends Controller
 
         // prompt to generate groups
         $prompt = "
-        [STRICT INSTRUCTIONS - JSON OUTPUT ONLY]
+[STRICT INSTRUCTIONS - JSON OUTPUT ONLY]
 Vous êtes un moteur de calcul ultra strict.
 
 Votre mission est de répartir une promotion d'étudiants en groupes, en respectant **strictement** les règles suivantes.
@@ -181,61 +181,56 @@ Votre mission est de répartir une promotion d'étudiants en groupes, en respect
 Vous recevez ci-dessous la **liste UNIQUE et DÉFINITIVE** des étudiants pour la promotion \"{$studentsJson}\".
 
 Chaque étudiant est représenté par :
-- \\\"id\\\" (identifiant entier unique)
-- \\\"last_name\\\" (chaîne de caractères)
-- \\\"first_name\\\" (chaîne de caractères)
-- \\\"grade\\\" (moyenne sur 20, nombre décimal)
+- \"id\" (identifiant entier unique)
+- \"last_name\" (chaîne de caractères)
+- \"first_name\" (chaîne de caractères)
+- \"grade\" (moyenne sur 20, nombre décimal)
 
 ❗Vous devez OBLIGATOIREMENT utiliser **tous les étudiants exactement tels qu’ils sont fournis**, sans en inventer, modifier ou omettre **aucun**.
 
 ---
 
-🎯 Votre objectif principal est de répartir les étudiants pour que :
-- Les groupes soient de taille équilibrée (pas de groupes très petits à côté de groupes très grands).
-- Les moyennes des notes (“grade”) soient les plus proches possibles entre tous les groupes.
-
----
-
 2. Objectif de la répartition :
 
-- Vous devez viser **environ {$request->numberGroup} groupes**, ce nombre est indicatif.
-- Toutefois, si le nombre exact de groupes ne permet pas une répartition équilibrée ou force à créer des groupes trop petits (moins de {$request->numberUsersInGroups} étudiants), alors vous pouvez former **moins de groupes**, mais jamais plus.
+🎯 But principal : créer **environ {$request->numberGroup} groupes**, dans le respect des conditions suivantes :
+
 - Aucun groupe ne doit contenir **moins de {$request->numberUsersInGroups} étudiants**.
-- Il est autorisé que certains groupes aient **plus** de {$request->numberUsersInGroups} étudiants.
-- Le nombre total d’étudiants répartis doit être **exactement égal à {$students->count()}**.
-- Il est interdit de créer un groupe contenant seulement 1 ou 2 personnes si les autres en ont beaucoup plus.
-- Visez un équilibre de taille entre les groupes autant que possible.
+- Il est possible que certains groupes aient plus d’étudiants, mais la différence entre tailles de groupe doit rester minimale.
+- Il est **interdit** d’avoir plus que {$request->numberGroup} groupes.
+- Le total d’étudiants répartis doit être exactement **{$students->count()}**.
 
 ---
 
-3. Équilibrage des groupes par moyenne :
+3. Équilibrage strict des groupes par moyenne :
 
-🎯 Votre objectif principal est de répartir les étudiants pour que **les moyennes des notes (“grade”) des groupes soient les plus proches possibles entre elles**.
+🎯 Objectif absolu : **minimiser l’écart entre les moyennes des groupes**.
 
-Cela signifie :
-- Répartissez les étudiants de façon à équilibrer les moyennes entre les groupes.
-- **La différence entre la moyenne la plus haute et la plus basse parmi les groupes doit être la plus faible possible.**
-- Mélangez les notes fortes et faibles dans chaque groupe pour éviter les extrêmes.
-- Il est interdit de classer simplement par ordre de notes.
+Vous devez :
+- Répartir les étudiants pour que les **moyennes des notes (“grade”) de chaque groupe soient aussi proches que possible**.
+- Visez un écart **inférieur à 1.00** entre la moyenne la plus basse et la plus haute. Cet écart doit être **le plus petit possible**.
+- Pour cela, **mélangez systématiquement des étudiants forts et faibles** dans chaque groupe (par exemple : pairing des extrêmes, stratégie de type “haut-bas-haut-bas”).
 
-📐 Calcul de la moyenne de groupe :
-- Moyenne_groupe = (somme des grades du groupe) ÷ (nombre d’étudiants dans le groupe)
-- Affichez chaque moyenne avec **2 décimales de précision**.
+📐 Calcul attendu :
+- Moyenne d’un groupe = somme des grades ÷ nombre d’étudiants
+- Affichez les moyennes avec **2 décimales**.
+
+💡 Toute répartition où un groupe contient des notes trop homogènes (tous forts ou tous faibles) est invalide.
 
 ---
 
 4. Historique des paires à éviter :
 
-- Vous devez utiliser l’historique des anciennes paires fourni ci-dessous :
-  {$studentsInGroupsJson}
-- Évitez **au maximum** que deux étudiants ayant déjà été dans le même groupe soient à nouveau ensemble.
-- Si ce n’est pas totalement évitable, **minimisez le nombre total de paires répétées**.
+Utilisez l’historique suivant :
+{$studentsInGroupsJson}
+
+- Chaque paire d’étudiants déjà ensemble dans un ancien groupe doit **être évitée autant que possible**.
+- S’il est impossible d’éviter **toutes** les paires, vous devez **minimiser le nombre total de paires répétées**, idéalement à zéro.
 
 ---
 
 5. Sortie attendue :
 
-Répondez **uniquement** avec un JSON strictement conforme à cette structure :
+Répondez **UNIQUEMENT** avec un JSON conforme exactement à cette structure :
 
 [
   {
@@ -254,8 +249,9 @@ Répondez **uniquement** avec un JSON strictement conforme à cette structure :
   ...
 ]
 
-🚨 Aucune autre sortie n’est acceptée : **pas de texte, pas de commentaires, pas d’explication, pas de récapitulatif, seulement le JSON**.
+🚨 Aucune autre sortie n’est acceptée : **pas de texte, pas de commentaires, pas de récapitulatif, seulement le JSON**.
 ";
+
 
         // generate the response
         $responseText = $gemini->generateText($prompt);

@@ -3,6 +3,7 @@
 use App\Http\Controllers\CohortController;
 use App\Http\Controllers\CommonLifeController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GithubController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RetroController;
 use App\Http\Controllers\StudentController;
@@ -52,6 +53,12 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/api/group-info/{id}', [GroupController::class, 'getInfo'])->name('group.info');
 
+        Route::get('/api/github-img/{owner}/{repo}', [GithubController::class, 'showPreviewImage'])->name('github.showPreviewImage');
+        Route::get('/api/github-languages/{owner}/{repo}', [GithubController::class, 'showLanguages'])->name('github.showLanguages');
+        Route::get('/api/github-contributors/{owner}/{repo}', [GithubController::class, 'showContributors'])->name('github.showContributors');
+        Route::get('/api/github-repo/{owner}/{repo}', [GithubController::class, 'showRepo'])->name('github.showRepo');
+
+
         // Retro
         route::get('retros', [RetroController::class, 'index'])->name('retro.index');
         Route::get('/retro/', [RetroController::class, 'show'])->name('retro.show');
@@ -71,7 +78,6 @@ Route::middleware('auth')->group(function () {
 
 
         Route::get('/retro/fetchdata/{cohortId}/{retroId}', [RetroController::class, 'fetchdata'])->name('retro.fetchdata');
-
 
 
         Route::get('/prompt-result', [GroupController::class, 'promptResult'])->name('prompt.result');

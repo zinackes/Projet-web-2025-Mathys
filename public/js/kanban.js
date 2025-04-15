@@ -51,7 +51,7 @@ function initializeKanban(data) {
     responsivePercentage: false,
     dragItems: true,
     boards: data,
-    dragBoards: false,
+    dragBoards: true,
     itemAddOptions: {
       enabled: true,
       content: '+ Ajouter une carte',
