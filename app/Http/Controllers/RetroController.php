@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CardCreate;
+use App\Events\CardMove;
 use App\Events\RetroUpdated;
 use App\Models\Retros;
 use App\Models\Cohort;
@@ -103,6 +105,8 @@ class RetroController extends Controller
             'name' => $request['name'],
         ]);
 
+        event(new CardCreate($card));
+
         return response()->json($card, 201);
     }
 
@@ -125,6 +129,8 @@ class RetroController extends Controller
                 'column_id' => $request['column_id'],
                 'name' => $request['name'],
             ]);
+
+            event(new CardMove($card));
         }
         else if (!$request['column_id']){
             $request->validate([
@@ -135,9 +141,9 @@ class RetroController extends Controller
             $update = $card->update([
                 'name' => $request['name'],
             ]);
-        }
 
-        event(new RetroUpdated($update));
+            event(new RetroUpdated($card));
+        }
 
 
         return response()->json(['message' => 'Column updated successfully', 'column' => $card]);

@@ -95,9 +95,9 @@
 <script src="{{ asset('metronic/vendors/apexcharts/apexcharts.min.js') }}"></script>
 <script src="{{ asset('metronic/js/widgets/general.js') }}"></script>
 <script src="https://js.pusher.com/8.3.0/pusher.min.js"></script>
-<script src="{{ mix('js/echo.js') }}"></script>
 <script src="{{ asset('kanban/dist/jkanban.js') }}"></script>
 <script src="{{ asset('js/chart.js') }}"></script>
+<script src="{{ mix('js/echo.js') }}"></script>
 <script src="{{ mix('js/app.js') }}"></script>
 <!-- End of Scripts -->
 </body>

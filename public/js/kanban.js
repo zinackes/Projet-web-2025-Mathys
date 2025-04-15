@@ -8,8 +8,22 @@ var kanban = null;
 var cohortId = params.get('cohortId');
 var retroId = params.get('retroId');
 var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-window.Echo.channel("Retro-Channel").listen('Retro.Updated', function () {
-  console.log('blabla');
+Echo.channel('Retro-Channel').listen('.Retro.Updated', function (event) {
+  var element = document.querySelector("[data-eid=\"item-id-".concat(event.retro.id, "\"]"));
+  element.textContent = event.retro.name;
+});
+Echo.channel('Retro-Channel').listen('.Board.Create', function (event) {
+  createColumn(event.board.id, event.board.name);
+});
+Echo.channel('Retro-Channel').listen('.Card.Create', function (event) {
+  createCard(Number(event.card.column_id), event.card.name, event.card.id);
+});
+Echo.channel('Retro-Channel').listen('.Card.Move', function (event) {
+  console.log(event);
+  changeCardColumn(event.card.id, Number(event.card.column_id), event.card.name);
+});
+Echo.channel('Retro-Channel').listen('.Board.Delete', function (event) {
+  deleteColumn(event.board.id);
 });
 fetch("/retro/fetchdata/".concat(cohortId, "/").concat(retroId), {
   method: 'GET',
@@ -65,15 +79,20 @@ function initializeKanban(data) {
     propagationHandlers: []
   });
 }
-function deleteColumn(el) {
+function changeCardColumn(cardId, columnId, text) {
+  kanban.removeElement("item-id-".concat(cardId));
+  createCard(columnId, text, cardId);
+}
+function deleteColumn(boardId) {
   if (!kanban) {
     console.error("Kanban non initialisé !");
     return;
   }
-  deleteColumnInBdd(el.parentElement.parentElement.getAttribute('data-id'));
+  console.log("ID BOARD: " + boardId);
+  kanban.removeBoard("column-id-".concat(boardId));
 }
-window.deleteColumn = deleteColumn;
-function deleteColumnInBdd(columnId) {
+window.deleteColumnInBdd = deleteColumnInBdd;
+function deleteColumnInBdd(el) {
   Swal.fire({
     title: "Voulez-vous vraiment supprimer cette colonne ?",
     showDenyButton: true,
@@ -81,7 +100,7 @@ function deleteColumnInBdd(columnId) {
     denyButtonText: "Annuler"
   }).then(function (result) {
     if (result.isConfirmed) {
-      var id = columnId.split('-').pop();
+      var id = el.parentElement.parentElement.getAttribute('data-id').split('-').pop();
       fetch("/retro/column/delete/".concat(id), {
         method: 'DELETE',
         headers: {
@@ -91,7 +110,6 @@ function deleteColumnInBdd(columnId) {
         return response.json();
       }).then(function (data) {
         console.log(data.message);
-        kanban.removeBoard(columnId); // Utilisation de kanban ici
         Swal.fire("Supprimé !", "", "success");
       })["catch"](function (error) {
         console.error('Erreur lors de la suppression :', error);
@@ -118,9 +136,9 @@ function createCard(boardId, text, id) {
     console.error("Kanban non initialisé !");
     return;
   }
-  kanban.addElement(boardId, {
-    title: text,
-    id: 'item-id-' + id
+  kanban.addElement('column-id-' + boardId, {
+    id: "item-id-" + id,
+    title: text
   });
 }
 function addElement(boardId) {
@@ -157,7 +175,6 @@ function updateCardNameToDB(oldTitle, elementId, el) {
       }).then(function (data) {
         console.log('Carte mise à jour :', data);
         Swal.fire('Carte mise à jour !', '', 'success');
-        el.textContent = result.value;
       })["catch"](function (error) {
         console.error('Erreur :', error);
         Swal.fire('Erreur lors de la mise à jour', '', 'error');
@@ -219,7 +236,6 @@ window.addColumnToDB = function () {
         return response.json();
       }).then(function (data) {
         console.log('Colonne ajoutée :', data);
-        createColumn(data.id, data.name);
         Swal.fire({
           icon: 'success',
           title: 'Colonne créée',
@@ -271,7 +287,6 @@ function addCardToDB(boardId) {
         return response.json();
       }).then(function (data) {
         console.log('Carte ajoutée :', data);
-        createCard(boardId, data.name, data.id);
       })["catch"](function (error) {
         console.error('Erreur :', error);
       });

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\BoardCreate;
+use App\Events\ColumnDelete;
 use App\Models\Retros;
 use App\Models\RetrosColumns;
 use Illuminate\Http\Request;
@@ -24,17 +26,26 @@ class RetroColumnController extends Controller
             'name' => $request['name'],
         ]);
 
+        event(new BoardCreate($column));
+
         return response()->json($column, 201);
     }
 
 
     public function delete($id) {
 
-
         $this->authorize('delete', RetrosColumns::class);
 
 
         $column = RetrosColumns::findOrFail($id);
+
+        $columnData = [
+            'id' => $column->id,
+            'name' => $column->name,
+            'retro_id' => $column->retro_id,
+        ];
+
+        event(new ColumnDelete($columnData));
         $column->delete();
 
         return response()->json(['message' => 'Colonne supprimée avec succès.'], 200);
