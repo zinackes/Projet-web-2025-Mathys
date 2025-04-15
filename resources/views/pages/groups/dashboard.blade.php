@@ -29,19 +29,19 @@
                 </form>
             </div>
         @else
-            <div class="grid gap-5 lg:gap-7.5 items-stretch">
-                <div class="card">
+            <div class="grid grid-cols-3 gap-4 ">
+                <div class="card col-span-3">
                     <div class="card-header">
                         <h3 class="card-title">
-                            Information sur le repo
+                            Informations sur le repo
                         </h3>
                     </div>
                     <div class="card-body flex gap-5">
                         <a href="" class="flex items-center" id="github_img_link" target="_blank" rel="noopener noreferrer">
-                            <img src="" id="github-img" alt="" class="!w-130 !h-auto object-contain border-r pr-5">
+                            <img src="" id="github-img" alt="" class="!w-100 !h-auto object-contain border-r pr-5">
                         </a>
 
-                        <div class="grid justify-between grid-cols-2 gap-y-10">
+                        <div class="grid justify-between grid-cols-2 gap-y-6">
                             <div class="flex gap-2 items-start">
                                 <!-- Icône -->
                                 <div class="px-1 py-1 flex items-center bg-gray-100/50 rounded-lg border !border-gray-300">
@@ -50,7 +50,7 @@
 
                                 <!-- Texte -->
                                 <div class="flex flex-col gap-2 mt-1">
-                                    <span class="text-sm text-gray-700 leading-tight">Nom</span>
+                                    <span class="text-sm text-gray-700 text-xs leading-tight">Nom</span>
                                     <span class="text-sm font-semibold" id="github_repo_name">Chargement du nom...</span>
                                 </div>
                             </div>
@@ -63,7 +63,7 @@
 
                                 <!-- Texte -->
                                 <div class="flex flex-col gap-2 mt-1">
-                                    <span class="text-sm text-gray-700 leading-tight">Créateur</span>
+                                    <span class="text-sm text-gray-700 text-xs leading-tight">Créateur</span>
                                     <span class="text-sm font-semibold" id="github_repo_owner">Chargement du nom...</span>
                                 </div>
                             </div>
@@ -76,7 +76,7 @@
 
                                 <!-- Texte -->
                                 <div class="flex flex-col gap-2 mt-1">
-                                    <span class="text-sm text-gray-700 leading-tight">Language</span>
+                                    <span class="text-sm text-gray-700 text-xs leading-tight">Language</span>
                                     <span class="text-sm font-semibold" id="github_repo_language">Chargement du language...</span>
                                 </div>
                             </div>
@@ -89,7 +89,7 @@
 
                                 <!-- Texte -->
                                 <div class="flex flex-col gap-2 mt-1">
-                                    <span class="text-sm text-gray-700 leading-tight">Contributeurs</span>
+                                    <span class="text-sm text-gray-700 text-xs leading-tight">Contributeurs</span>
                                     <span class="text-sm font-semibold" id="github_repo_contributors">Chargement du nombre de contributeur...</span>
                                 </div>
                             </div>
@@ -102,7 +102,7 @@
 
                                 <!-- Texte -->
                                 <div class="flex flex-col gap-2 mt-1">
-                                    <span class="text-sm text-gray-700 leading-tight">Date Création</span>
+                                    <span class="text-sm text-gray-700 text-xs leading-tight">Date Création</span>
                                     <span class="text-sm font-semibold" id="github_repo_creation_date">Chargement de la date de création...</span>
                                 </div>
                             </div>
@@ -115,13 +115,56 @@
 
                                 <!-- Texte -->
                                 <div class="flex flex-col gap-2 mt-1">
-                                    <span class="text-sm text-gray-700 leading-tight">Dernière Mise a jour</span>
+                                    <span class="text-sm text-gray-700 text-xs leading-tight">Dernière Mise a jour</span>
                                     <span class="text-sm font-semibold" id="github_repo_update_date">Chargement de la date de mise a jour...</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!--
+                <div class="card col-span-1">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Liste des branches
+                        </h3>
+                    </div>
+                    <div class="card-table">
+                        <table class="table align-middle text-gray-700 font-medium text-sm">
+                            <thead>
+                            <tr>
+                                <th>
+                                    Nom
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody id="github_repo_table_body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card col-span-2">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Liste des commits
+                        </h3>
+                    </div>
+                    <div class="card-table">
+                        <table class="table align-middle text-gray-700 font-medium text-sm">
+                            <thead>
+                            <tr>
+                                <th>
+                                    Nom
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody id="github_repo_table_body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                -->
+                <div id="chart" class="col-span-3"></div>
             </div>
         @endif
     </div>

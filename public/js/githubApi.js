@@ -38,31 +38,55 @@ async function main() {
         const languagesRequest = await fetch(`/api/github-languages/${owner}/${repo}`);
 
         if(languagesRequest.ok){
-            let languagesData = await languagesRequest.json();
+            const languagesData = await languagesRequest.json();
             document.querySelector('#github_repo_language').textContent = languagesData.main_languages;
             document.querySelector('#github_img_link').href = groupdata.github_link;
         }
 
         const contributorsRequest = await fetch(`/api/github-contributors/${owner}/${repo}`);
         if(contributorsRequest.ok){
-            let contributorsData = await contributorsRequest.json();
+            const contributorsData = await contributorsRequest.json();
             document.querySelector('#github_repo_contributors').textContent = contributorsData.length;
         }
 
         const repoRequest = await fetch(`/api/github-repo/${owner}/${repo}`);
 
         if(repoRequest.ok){
-            let repoData = await repoRequest.json();
-            console.log(repoData);
+            const repoData = await repoRequest.json();
             document.querySelector('#github_repo_creation_date').textContent = formatDateFr(repoData.created_at);
             document.querySelector('#github_repo_update_date').textContent = formatDateFr(repoData.updated_at);
         }
 
-        const repoData = await octokit.request('GET /repos/{owner}/{repo}', {
-            owner,
-            repo
-        });
+        /*const branchesRequest = await fetch(`/api/github-branches/${owner}/${repo}`);
 
+        if(branchesRequest.ok){
+            const branchesData = await branchesRequest.json();
+            let tableBody = document.querySelector('#github_repo_table_body');
+            if(branchesData.length >= 5){
+                for(let i = 0; i < 6; i++){
+                    const tr = document.createElement('tr');
+                    tableBody.appendChild(tr);
+                    const th = document.createElement('th');
+                    if(i < 5){
+                        th.textContent = branchesData[i].name;
+                    }
+                    else{
+                        th.textContent = "...";
+                    }
+                    tr.appendChild(th);
+                }
+
+            }
+            else{
+            for(let i = 0; i < branchesData.length; i++){
+                const tr = document.createElement('tr');
+                tableBody.appendChild(tr);
+                const th = document.createElement('th');
+                th.textContent = branchesData[i].name;
+                tr.appendChild(th);
+            }}
+
+        }*/
 
         await showGithubImage(owner, repo);
 
@@ -74,15 +98,6 @@ async function main() {
 
 main();
 
-async function getContributors(owner, repo){
-    const contributors = await octokit.request('GET /repos/{owner}/{repo}/contributors', {
-        owner,
-        repo
-    })
-
-    document.querySelector('#github_repo_contributors').textContent = contributors.data.length;
-
-}
 
 function formatDateFr(isoDateString) {
     const date = new Date(isoDateString);

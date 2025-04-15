@@ -1,17 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
-        <h1 class="flex items-center gap-1 text-sm font-normal">
-            <span class="text-gray-700">
-                {{ __('Groupes') }}
-            </span>
-        </h1>
     </x-slot>
 
     <div class="grid">
         <div class="card card-grid min-w-full">
             <div class="card-header py-5 flex-wrap">
                 <h3 class="card-title">
-                    Static DataTable
+                    Liste des groupes
                 </h3>
             </div>
             <div class="card-body">
@@ -29,7 +24,7 @@
           </span>
          </span>
                                 </th>
-                                <th class="min-w-[185px]">
+                                <th class="min-w-[185px] text-center">
          <span class="sort">
           <span class="sort-label">
            Description
@@ -38,7 +33,16 @@
           </span>
          </span>
                                 </th>
-                                <th class="min-w-[100px]">
+                                <th class="min-w-[120px] text-center">
+         <span class="sort">
+          <span class="sort-label">
+           Promotion
+          </span>
+          <span class="sort-icon">
+          </span>
+         </span>
+                                </th>
+                                <th class="w-[105px] text-center">
          <span class="sort">
           <span class="sort-label">
            Status
@@ -47,7 +51,7 @@
           </span>
          </span>
                                 </th>
-                                <th class="w-[60px]">
+                                <th class="w-[60px] text-center">
                                 </th>
                             </tr>
                             </thead>
@@ -61,9 +65,37 @@
 
                                     </td>
                                     <td>
-
+                                        {{$group->cohort->name}}
                                     </td>
                                     <td>
+                                        @php
+                                            $start = \Carbon\Carbon::parse($group->start_date);
+                                            $end = \Carbon\Carbon::parse($group->end_date);
+
+                                            $isBeforeTime = !\Carbon\Carbon::parse($group->start_date)->isPast();
+                                            $hasBegun = now()->between($start, $end);
+                                        @endphp
+
+                                        @if ($isBeforeTime)
+                                            <div class="bg-orange-200/70 rounded-lg flex items-center justify-evenly">
+                                                <span class="badge badge-dot size-2 bg-warning"></span>
+                                                <p class="text-xs text-orange-500/80">Attente</p>
+                                            </div>
+                                        @elseif($hasBegun)
+
+                                            <div class="bg-green-200/70 rounded-lg flex items-center justify-evenly">
+                                                <span class="badge badge-dot size-2 bg-success"></span>
+                                                <p class="text-xs text-green-500/80">En cours</p>
+                                            </div>
+                                        @else
+
+                                            <div class="bg-gray-200/70 rounded-lg flex items-center justify-evenly">
+                                                <span class="badge badge-dot size-2 bg-gray-400"></span>
+                                                <p class="text-xs text-gray-500/80">Terminé</p>
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
                                         @php
                                             $encryptedProjectName = Illuminate\Support\Facades\Crypt::encryptString($group->project_name);
                                         @endphp

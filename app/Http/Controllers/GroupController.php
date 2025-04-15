@@ -165,8 +165,6 @@ class GroupController extends Controller
             'numberUsersInGroups.min' => 'Il doit y avoir au moins un étudiant par groupe.',
         ];
 
-
-
         // prompt to generate groups
         $prompt = "
 [STRICT INSTRUCTIONS - JSON OUTPUT ONLY]
@@ -178,7 +176,7 @@ Votre mission est de répartir une promotion d'étudiants en groupes, en respect
 
 1. Liste des étudiants :
 
-Vous recevez ci-dessous la **liste UNIQUE et DÉFINITIVE** des étudiants pour la promotion \"{$studentsJson}\".
+Vous recevez ci-dessous la **liste UNIQUE, DÉFINITIVE et VERROUILLÉE** des étudiants pour la promotion \"{$studentsJson}\".
 
 Chaque étudiant est représenté par :
 - \"id\" (identifiant entier unique)
@@ -186,18 +184,24 @@ Chaque étudiant est représenté par :
 - \"first_name\" (chaîne de caractères)
 - \"grade\" (moyenne sur 20, nombre décimal)
 
-❗Vous devez OBLIGATOIREMENT utiliser **tous les étudiants exactement tels qu’ils sont fournis**, sans en inventer, modifier ou omettre **aucun**.
+⚠️ **IMPORTANT :**
+- Vous devez utiliser **exclusivement** les étudiants fournis dans cette liste.
+- Il est **formellement interdit** d’inventer, dupliquer, modifier ou omettre un étudiant.
+- Le nombre total d’étudiants répartis dans la sortie finale doit être **exactement égal à {$students->count()}**.
 
 ---
 
 2. Objectif de la répartition :
 
-🎯 But principal : créer **environ {$request->numberGroup} groupes**, dans le respect des conditions suivantes :
+🎯 But principal : créer **environ {$request->numberGroup} groupes**, dans le respect des contraintes suivantes :
 
-- Aucun groupe ne doit contenir **moins de {$request->numberUsersInGroups} étudiants**.
-- Il est possible que certains groupes aient plus d’étudiants, mais la différence entre tailles de groupe doit rester minimale.
-- Il est **interdit** d’avoir plus que {$request->numberGroup} groupes.
-- Le total d’étudiants répartis doit être exactement **{$students->count()}**.
+- Tous les étudiants doivent être répartis **une seule fois chacun**.
+- Si les contraintes de taille de groupes ou d’équilibrage des moyennes ne peuvent pas être respectées avec les étudiants fournis, **vous devez recalculer et recommencer**, sans jamais :
+  - Ajouter d’étudiants
+  - Supprimer d’étudiants
+  - Répartir un étudiant plusieurs fois
+
+📌 Toute solution qui ne respecte pas ce point est immédiatement invalide.
 
 ---
 
@@ -207,24 +211,23 @@ Chaque étudiant est représenté par :
 
 Vous devez :
 - Répartir les étudiants pour que les **moyennes des notes (“grade”) de chaque groupe soient aussi proches que possible**.
-- Visez un écart **inférieur à 1.00** entre la moyenne la plus basse et la plus haute. Cet écart doit être **le plus petit possible**.
-- Pour cela, **mélangez systématiquement des étudiants forts et faibles** dans chaque groupe (par exemple : pairing des extrêmes, stratégie de type “haut-bas-haut-bas”).
+- Visez un écart **strictement inférieur à 1.00** entre la moyenne la plus basse et la plus haute.
+- Appliquer une stratégie de type **pairing des extrêmes** (fort-faible) pour équilibrer chaque groupe.
 
-📐 Calcul attendu :
-- Moyenne d’un groupe = somme des grades ÷ nombre d’étudiants
-- Affichez les moyennes avec **2 décimales**.
+📐 Moyenne d’un groupe = somme des grades ÷ nombre d’étudiants
 
-💡 Toute répartition où un groupe contient des notes trop homogènes (tous forts ou tous faibles) est invalide.
+⚠️ Si l'écart est trop grand ou si des groupes sont trop homogènes (tous forts ou tous faibles), alors la répartition est invalide et doit être **recalculée** entièrement.
 
 ---
 
 4. Historique des paires à éviter :
 
-Utilisez l’historique suivant :
+Historique des anciennes répartitions :
 {$studentsInGroupsJson}
 
-- Chaque paire d’étudiants déjà ensemble dans un ancien groupe doit **être évitée autant que possible**.
-- S’il est impossible d’éviter **toutes** les paires, vous devez **minimiser le nombre total de paires répétées**, idéalement à zéro.
+Règles :
+- Toute paire d’étudiants déjà ensemble dans un groupe doit être **évité autant que possible**.
+- S’il est impossible de les éviter toutes, vous devez **minimiser le nombre total de paires répétées**, idéalement à zéro.
 
 ---
 
@@ -250,7 +253,10 @@ Répondez **UNIQUEMENT** avec un JSON conforme exactement à cette structure :
 ]
 
 🚨 Aucune autre sortie n’est acceptée : **pas de texte, pas de commentaires, pas de récapitulatif, seulement le JSON**.
+
+📌 Si la répartition n’est pas possible selon les critères définis (équilibre, paires à éviter, taille des groupes), **vous devez recalculer jusqu’à obtenir une configuration valide**, toujours **sans jamais ajouter, dupliquer ou supprimer d’étudiants**.
 ";
+
 
 
         // generate the response
@@ -267,13 +273,12 @@ Répondez **UNIQUEMENT** avec un JSON conforme exactement à cette structure :
         // decode the json
         $decoded = json_decode($jsonString, true);
 
-
         // pass the generated json to session and return view
         if (json_last_error() === JSON_ERROR_NONE) {
             session(['generated_groups' => $decoded]);
             return view('pages.groups.promptResult', [
                 'groups' => $decoded,
-                'studentsInGroups' => $studentsInGroups,
+                'studentsInGroups' => $students,
                 'project_name' => $request->project_name,
                 'request' => $request,
             ]);
@@ -299,6 +304,7 @@ Répondez **UNIQUEMENT** avec un JSON conforme exactement à cette structure :
         foreach ($groups as $group) {
             $createdGroup = Group::create([
                 'user_id' => auth()->user()->id,
+                'cohort_id' => $request->cohort_id,
                 'group_name' => "Groupe " . $group['group_id'],
                 'description' => 'aucune',
                 'start_date' => Date::create(2025, 1, 1, 12, 0, 0),

@@ -79,4 +79,12 @@ class GithubController extends Controller
 
         return response()->json($response->json());
     }
+
+    public function showBranches($owner, $repo){
+
+        $response = Http::withToken(env('GITHUB_TOKEN'))
+            ->get("https://api.github.com/repos/{$owner}/{$repo}/branches");
+
+        return response()->json($response->json());
+    }
 }

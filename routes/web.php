@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/github-languages/{owner}/{repo}', [GithubController::class, 'showLanguages'])->name('github.showLanguages');
         Route::get('/api/github-contributors/{owner}/{repo}', [GithubController::class, 'showContributors'])->name('github.showContributors');
         Route::get('/api/github-repo/{owner}/{repo}', [GithubController::class, 'showRepo'])->name('github.showRepo');
+        Route::get('/api/github-branches/{owner}/{repo}', [GithubController::class, 'showBranches'])->name('github.showBranches');
 
 
         // Retro

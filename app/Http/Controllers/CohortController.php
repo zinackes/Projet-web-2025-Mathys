@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cohort;
+use App\Models\User;
 use App\Models\UserCohort;
+use App\Models\UserGroup;
 use App\Models\UserSchool;
 use App\Events\CohortUpdated;
 use Illuminate\Contracts\View\Factory;
@@ -37,12 +39,18 @@ class CohortController extends Controller
      */
     public function show(Cohort $cohort) {
 
-        $usersInCohort = UserCohort::where('cohort_id', $cohort->id)->get();
+        $studentsInCohort = UserCohort::where('cohort_id', $cohort->id)->get();
+        $studentIds = $studentsInCohort->pluck('user_id');
+
+        // Get the students (excluding admin and teacher role)
+        $students = User::whereIn('id', $studentIds)
+            ->get()
+            ->filter(fn($u) => optional($u->school())->pivot->role === 'student' || is_null(optional($u->school())->pivot->role));
 
 
         return view('pages.cohorts.show', [
             'cohort' => $cohort,
-            'usersInCohort' => $usersInCohort
+            'usersInCohort' => $students
         ]);
     }
 

@@ -49,8 +49,8 @@
                                     <tbody>
                                     @foreach($usersInCohort as $userInCohort)
                                         <tr>
-                                            <td>{{$userInCohort->user->last_name}}</td>
-                                            <td>{{$userInCohort->user->first_name}}</td>
+                                            <td>{{$userInCohort->last_name}}</td>
+                                            <td>{{$userInCohort->first_name}}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>
