@@ -29,6 +29,7 @@ class GroupController extends Controller
     public function index()
     {
 
+        // get user id and user in cohort
         $userId = auth()->user()->id;
         $userCohort = UserCohort::where('user_id', $userId)->first();
 
@@ -41,16 +42,18 @@ class GroupController extends Controller
 
         if (auth()->user()->school()->pivot->role === "admin") {
 
+            // Get all groups id by group name
             $uniqueGroupIds = Group::selectRaw('MIN(id) as id')
                 ->groupBy('project_name')
                 ->pluck('id');
 
-
+            // get all groups
             $groups = Group::whereIn('id', $uniqueGroupIds)->get();
         } else {
 
             $cohortId = $userCohort->cohort_id;
 
+            // Get all groups id by group name from 1 cohort
             $uniqueGroupIds = Group::where('cohort_id', $cohortId)
                 ->selectRaw('MIN(id) as id')
                 ->groupBy('project_name')
@@ -64,8 +67,11 @@ class GroupController extends Controller
         ]);
     }
 
+
     public function dashboard($group_name, Request $request)
     {
+
+        // get group
         $group = Group::where('id', $request->group)->first();
 
 
@@ -88,6 +94,7 @@ class GroupController extends Controller
 
     public function updateGithub(Request $request) {
 
+        // Update github link for group
         Group::where('id', $request->group_id)->update([
             'github_link' => $request->github_link,
         ]);
@@ -98,11 +105,14 @@ class GroupController extends Controller
 
     public function show($project_name) {
 
+        // decrypt project name
         $decryptedName = Crypt::decryptString($project_name);
 
+        // get all group id from the same project name
         $groups = Group::where('project_name', $decryptedName)->get();
         $groupsId = $groups->pluck('id');
 
+        // get groups from project id and group them
         $studentsByGroup = UserGroup::whereIn('group_id', $groupsId)
             ->get()
             ->groupBy('group_id');
@@ -121,7 +131,7 @@ class GroupController extends Controller
         $studentsInCohort = UserCohort::where('cohort_id', $cohortId)->get();
         $studentIds = $studentsInCohort->pluck('user_id');
 
-        // Get the students (excluding admin and teacher role
+        // Get the students (excluding admin and teacher role)
         $students = User::whereIn('id', $studentIds)
             ->get()
             ->filter(fn($u) => optional($u->school())->pivot->role === 'student' || is_null(optional($u->school())->pivot->role));
@@ -129,10 +139,12 @@ class GroupController extends Controller
 
         $studentsJson = json_encode($students->toArray(), JSON_PRETTY_PRINT);
 
+        // get students in groups
         $studentsGroups = UserGroup::whereIn('user_id', $studentIds)->get();
         $studentsInGroupsIds = $studentsGroups->pluck('user_id');
         $studentsInGroups = User::whereIn('id', $studentsInGroupsIds)->get();
 
+        // transform students in groups to json
         $studentsInGroupsJson = json_encode($studentsGroups->toArray(), JSON_PRETTY_PRINT);
 
         $totalStudents = $students->count();
@@ -155,7 +167,7 @@ class GroupController extends Controller
 
 
 
-
+        // prompt to generate groups
         $prompt = "
         [STRICT INSTRUCTIONS - JSON OUTPUT ONLY]
 Vous êtes un moteur de calcul ultra strict.
@@ -245,19 +257,22 @@ Répondez **uniquement** avec un JSON strictement conforme à cette structure :
 🚨 Aucune autre sortie n’est acceptée : **pas de texte, pas de commentaires, pas d’explication, pas de récapitulatif, seulement le JSON**.
 ";
 
-
+        // generate the response
         $responseText = $gemini->generateText($prompt);
 
 
+        // try to get the json from the ia
         if (preg_match('/```json(.*?)```/s', $responseText, $matches)) {
             $jsonString = trim($matches[1]);
         } else {
             $jsonString = trim($responseText);
         }
 
+        // decode the json
         $decoded = json_decode($jsonString, true);
 
 
+        // pass the generated json to session and return view
         if (json_last_error() === JSON_ERROR_NONE) {
             session(['generated_groups' => $decoded]);
             return view('pages.groups.promptResult', [
@@ -277,12 +292,14 @@ Répondez **uniquement** avec un JSON strictement conforme à cette structure :
 
     public function store(Request $request)
     {
+        // get the generated json groups
         $groups = session('generated_groups');
 
         if (!$groups) {
             return redirect()->back()->with('error', 'Les groupes ne sont plus disponibles.');
         }
 
+        // create the number of group from the json;
         foreach ($groups as $group) {
             $createdGroup = Group::create([
                 'user_id' => auth()->user()->id,
@@ -295,6 +312,7 @@ Répondez **uniquement** avec un JSON strictement conforme à cette structure :
 
             $newGroupId = $createdGroup->id;
 
+            // associate each students in groups to their respective groups
             foreach ($group['students'] as $student) {
                 UserGroup::create([
                     'user_id' => $student['id'],
@@ -304,6 +322,7 @@ Répondez **uniquement** avec un JSON strictement conforme à cette structure :
             }
         }
 
+        // forget the json
         session()->forget('generated_groups');
 
         return redirect()->route('cohort.show', $request->cohort_id)

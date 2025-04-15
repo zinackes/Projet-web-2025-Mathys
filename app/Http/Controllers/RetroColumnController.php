@@ -14,6 +14,11 @@ class RetroColumnController extends Controller
 
     use AuthorizesRequests;
 
+    /**
+     * Store in BDD the board for a retro and send event to pusher
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request){
 
         $request->validate([
@@ -26,12 +31,18 @@ class RetroColumnController extends Controller
             'name' => $request['name'],
         ]);
 
+        // send event to pusher
         event(new BoardCreate($column));
 
         return response()->json($column, 201);
     }
 
-
+    /**
+     * Delete a board from BDD and send event to pusher
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function delete($id) {
 
         $this->authorize('delete', RetrosColumns::class);

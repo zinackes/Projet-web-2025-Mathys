@@ -22,7 +22,8 @@ async function main() {
 
         const url = new URL(groupdata.github_link);
         let [owner, repo] = url.pathname.slice(1).split('/');
-        repo = repo.split('-');
+        repo = repo.replace(/[-_]/g, ' ')
+            .replace(/\b\w/g, char => char.toUpperCase());
 
         console.log("Owner :", owner);
         console.log("Repo :", repo);

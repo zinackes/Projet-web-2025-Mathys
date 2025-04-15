@@ -34,6 +34,15 @@ class RetroColCardPolicy
     }
 
     /**
+     * Determine whether the user can move the card.
+     * @param User $user
+     * @return bool
+     */
+    public function move(User $user): bool{
+        return true;
+    }
+
+    /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user): bool

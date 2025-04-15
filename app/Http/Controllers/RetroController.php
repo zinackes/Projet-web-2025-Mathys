@@ -64,7 +64,12 @@ class RetroController extends Controller
         ]);
     }
 
-
+    /**
+     * Store a retro in BDD, also check if user can create one
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function store(Request $request) {
 
         $this->authorize('create', Retros::class);
@@ -89,6 +94,11 @@ class RetroController extends Controller
         return redirect()->back()->with('success', 'Retro added!');
     }
 
+    /**
+     * Store a card in BDD and send event to pusher
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function card(Request $request) {
 
         $request->validate([
@@ -110,15 +120,22 @@ class RetroController extends Controller
         return response()->json($card, 201);
     }
 
+    /**
+     * update only name of card or his name and board and send event to pusher
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function updateCard(Request $request, $id) {
 
 
         $card = RetrosColumnsCards::findOrFail($id);
-        $this->authorize('update', $card);
-
-
 
         if($request['column_id']){
+
+            $this->authorize('move', $card);
+
             $request->validate([
                 'column_id' => 'required|integer',
                 'name' => 'required|string',
@@ -133,6 +150,9 @@ class RetroController extends Controller
             event(new CardMove($card));
         }
         else if (!$request['column_id']){
+
+            $this->authorize('update', $card);
+
             $request->validate([
                 'name' => 'required|string',
             ]);
@@ -149,19 +169,26 @@ class RetroController extends Controller
         return response()->json(['message' => 'Column updated successfully', 'column' => $card]);
     }
 
-
+    /**
+     * user in ajax to get data from the retro (boards and cards)
+     * @param $cohortId
+     * @param $retroId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function fetchdata($cohortId, $retroId) {
         $cohort = Cohort::with('retros')->find($cohortId);
 
         $userId = auth()->user()->id;
 
         if ($cohort && $cohort->retros->isNotEmpty()) {
+            // get the retro;
             $retro = $cohort->retros->where('id', $retroId)->first();
 
             if ($retro) {
                 $retro->load('columns');
                 $response = [];
 
+                // fill the response array with the right structure
                 if ($retro->columns->isNotEmpty()) {
                     foreach ($retro->columns as $column) {
                         $columnData = [
@@ -209,29 +236,26 @@ class RetroController extends Controller
         $cohort = Cohort::with('retros')->find($cohortId);
 
 
-        // Vérifie si le cohort et les rétros existent
+        // Verify if a retro exist in a cohort
         if ($cohort && $cohort->retros->isNotEmpty()) {
-            // Filtre la rétrospective par son ID
             $retro = $cohort->retros->where('id', $retroId)->first();
 
-            // Si la rétrospective est trouvée
             if ($retro) {
-                $retro->load('columns'); // Charge les colonnes liées à cette rétrospective
+                // get the boars from retro
+                $retro->load('columns');
 
                 $response = [];
 
-                // Vérifie si la rétrospective a des colonnes
                 if ($retro->columns->isNotEmpty()) {
-                    // Boucle sur les colonnes de la rétrospective
+
+                    // fill the response array with boards and cards with the right structure
                     foreach ($retro->columns as $column) {
-                        // Prépare les données pour chaque colonne
                         $columnData = [
                             'id' => 'column-id-' . $column->id,
                             'title' => $column->name,
                             'item' => [],
                         ];
 
-                        // Ajoute les cartes de la colonne à la réponse
                         foreach ($column->cards as $card) {
                             $columnData['item'][] = [
                                 'id' => 'item-id-' . $card->id,
@@ -240,12 +264,11 @@ class RetroController extends Controller
                             ];
                         }
 
-                        // Ajoute la colonne à la réponse
                         $response[] = $columnData;
                     }
                 }
 
-                // Retourne la vue avec la rétrospective filtrée et les données des colonnes
+
                 return response()->view('pages.retros.retro', [
                     'retro' => $response,
                     'TheRetro' => $retro,
@@ -258,7 +281,6 @@ class RetroController extends Controller
             }
         }
 
-        // Si aucun résultat n'est trouvé
         return redirect()->back()->with('error', 'Retro not found!');
     }
 

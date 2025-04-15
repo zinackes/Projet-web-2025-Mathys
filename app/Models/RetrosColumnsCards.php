@@ -8,6 +8,10 @@ class RetrosColumnsCards extends Model
 {
     protected $table = 'retros_columns_cards';
 
+    /**
+     * A card can only have one board
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function retros_columns(){
         return $this->belongsTo(RetrosColumns::class);
     }
