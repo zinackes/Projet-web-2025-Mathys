@@ -26,12 +26,12 @@ class ColumnDelete implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * @return array<int, Channel>
      */
     public function broadcastOn(): array
     {
         return [
-            new Channel('Retro-Channel')
+            new Channel('retro.' . $this->board['retro_id']),
         ];
     }
 
@@ -46,9 +46,5 @@ class ColumnDelete implements ShouldBroadcast
         return [
             'board' => $this->board
         ];
-    }
-
-    public function broadcastVia(){
-        return ['sync'];
     }
 }

@@ -20,7 +20,6 @@ class RetroUpdated implements ShouldBroadcast
     public $retro;
 
 
-
     /**
      * Create a new event instance.
      */
@@ -37,7 +36,7 @@ class RetroUpdated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('Retro-Channel')
+            new Channel('retro.' . $this->retro->retro_id),
         ];
     }
 

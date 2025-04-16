@@ -29,7 +29,7 @@
                 </form>
             </div>
         @else
-            <div class="grid grid-cols-3 gap-4 ">
+            <div class="grid grid-cols-3 gap-4 w-full">
                 <div class="card col-span-3">
                     <div class="card-header">
                         <h3 class="card-title">
@@ -38,10 +38,10 @@
                     </div>
                     <div class="card-body flex gap-5">
                         <a href="" class="flex items-center" id="github_img_link" target="_blank" rel="noopener noreferrer">
-                            <img src="" id="github-img" alt="" class="!w-100 !h-auto object-contain border-r pr-5">
+                            <img src="" id="github-img" alt="" class=" !h-auto object-contain border-r pr-5">
                         </a>
 
-                        <div class="grid justify-between grid-cols-2 gap-y-6">
+                        <div class="grid justify-between grid-cols-2 gap-y-6 w-full">
                             <div class="flex gap-2 items-start">
                                 <!-- Icône -->
                                 <div class="px-1 py-1 flex items-center bg-gray-100/50 rounded-lg border !border-gray-300">
@@ -120,6 +120,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
                 <!--

@@ -16556,23 +16556,27 @@ var retroData = {};
 var kanban = null;
 var cohortId = params.get('cohortId');
 var retroId = params.get('retroId');
+var modalBtnDismiss = document.getElementById('retro_modal_dismiss');
 var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-Echo.channel('Retro-Channel').listen('.Retro.Updated', function (event) {
+Echo.channel("retro.".concat(retroId)).listen('.Retro.Updated', function (event) {
   var element = document.querySelector("[data-eid=\"item-id-".concat(event.retro.id, "\"]"));
   element.textContent = event.retro.name;
 });
-Echo.channel('Retro-Channel').listen('.Board.Create', function (event) {
+Echo.channel("retro.".concat(retroId)).listen('.Board.Create', function (event) {
   createColumn(event.board.id, event.board.name);
 });
-Echo.channel('Retro-Channel').listen('.Card.Create', function (event) {
+Echo.channel("retro.".concat(retroId)).listen('.Card.Create', function (event) {
   createCard(Number(event.card.column_id), event.card.name, event.card.id);
 });
-Echo.channel('Retro-Channel').listen('.Card.Move', function (event) {
+Echo.channel("retro.".concat(retroId)).listen('.Card.Move', function (event) {
   console.log(event);
   changeCardColumn(event.card.id, Number(event.card.column_id), event.card.name);
 });
-Echo.channel('Retro-Channel').listen('.Board.Delete', function (event) {
+Echo.channel("retro.".concat(retroId)).listen('.Board.Delete', function (event) {
   deleteColumn(event.board.id);
+});
+Echo.channel("retro.".concat(retroId)).listen('.Card.Delete', function (event) {
+  deleteCard(event.card.id);
 });
 fetch("/retro/fetchdata/".concat(cohortId, "/").concat(retroId), {
   method: 'GET',
@@ -16587,7 +16591,7 @@ fetch("/retro/fetchdata/".concat(cohortId, "/").concat(retroId), {
 }).then(function (data) {
   retroData = data;
   initializeKanban(retroData.response);
-  console.log(retroData.cohortId);
+  console.log(retroData);
 })["catch"](function (error) {
   console.error('Erreur lors de la requête GET :', error);
 });
@@ -16616,7 +16620,13 @@ function initializeKanban(data) {
     },
     click: function click(el) {
       var elementId = parseInt(el.getAttribute('data-eid').match(/\d+$/)[0]);
-      updateCardNameToDB(el.textContent, elementId, el);
+      var modalBtn = document.getElementById('openModalBtn');
+      var modalText = document.getElementById('retro_modal_text');
+      var modalId = document.getElementById('retro_modal_id');
+      modalText.value = el.textContent;
+      modalId.value = elementId;
+      modalBtn.click();
+      //updateCardNameToDB(el.textContent, elementId);
     },
     dropEl: function dropEl(el, target) {
       var elementId = parseInt(el.getAttribute('data-eid').match(/\d+$/)[0]);
@@ -16693,42 +16703,47 @@ function createCard(boardId, text, id) {
 function addElement(boardId) {
   addCardToDB(boardId);
 }
-function updateCardNameToDB(oldTitle, elementId, el) {
-  Swal.fire({
-    title: 'Modifier la carte',
-    input: 'text',
-    inputLabel: 'Nouveau titre de la carte',
-    inputValue: oldTitle,
-    showCancelButton: true,
-    confirmButtonText: 'Mettre à jour',
-    cancelButtonText: 'Annuler',
-    inputValidator: function inputValidator(value) {
-      if (!value) {
-        return 'Le titre ne peut pas être vide !';
-      }
+function deleteCard(id) {
+  if (!kanban) {
+    console.error("Kanban non initialisé !");
+    return;
+  }
+  console.log("ID Carte: " + id);
+  kanban.removeElement("item-id-".concat(id));
+}
+window.deleteCardInBdd = deleteCardInBdd;
+function deleteCardInBdd(id) {
+  fetch("/retro/card/delete/".concat(id), {
+    method: 'DELETE',
+    headers: {
+      'X-CSRF-TOKEN': csrfToken
     }
-  }).then(function (result) {
-    if (result.isConfirmed) {
-      var newTitle = result.value;
-      fetch("/retro/card/update/name/".concat(elementId), {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': csrfToken
-        },
-        body: JSON.stringify({
-          name: newTitle
-        })
-      }).then(function (response) {
-        return response.json();
-      }).then(function (data) {
-        console.log('Carte mise à jour :', data);
-        Swal.fire('Carte mise à jour !', '', 'success');
-      })["catch"](function (error) {
-        console.error('Erreur :', error);
-        Swal.fire('Erreur lors de la mise à jour', '', 'error');
-      });
-    }
+  }).then(function (response) {
+    return response.json();
+  }).then(function (data) {
+    console.log(data.message);
+  })["catch"](function (error) {
+    console.error('Erreur lors de la suppression :', error);
+  });
+}
+window.updateCardNameToDB = updateCardNameToDB;
+function updateCardNameToDB(title, elementId) {
+  fetch("/retro/card/update/name/".concat(elementId), {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-TOKEN': csrfToken
+    },
+    body: JSON.stringify({
+      name: title
+    })
+  }).then(function (response) {
+    return response.json();
+  }).then(function (data) {
+    console.log('Carte mise à jour :', data);
+    modalBtnDismiss.click();
+  })["catch"](function (error) {
+    console.error('Erreur :', error);
   });
 }
 function updateCardToDB(board, title, elementId) {

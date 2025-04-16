@@ -45,9 +45,9 @@ class RetroColCardPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user): bool
+    public function delete(User $user, RetrosColumnsCards $retrosColumnsCards): bool
     {
-        return in_array($user->school()->pivot->role, ['admin', 'teacher']);
+        return $user->id === $retrosColumnsCards->retro_id || in_array($user->school()->pivot->role, ['admin', 'teacher']);
     }
 
     /**

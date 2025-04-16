@@ -79,6 +79,9 @@
             <x-forms.input class="hidden" name="cohort_id" :value="$request->cohort_id" :label="__('Nom du projet')"
                            :messages="$errors->get('cohort_id')" :type="'number'"/>
 
+            <x-forms.input class="hidden" name="description" :value="$request->description" :label="__('Nom du projet')"
+                           :messages="$errors->get('description')" :type="'textarea'"/>
+
             <button type="submit" class="btn btn-danger">Valider les groupes</button>
         </form>
 

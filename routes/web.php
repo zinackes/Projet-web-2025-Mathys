@@ -14,6 +14,7 @@ use App\Services\GeminiService;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RetroColumnController;
 use Illuminate\Support\Facades\Broadcast;
+use App\Http\Controllers\RetroColumnCardController;
 
 
 // Redirect the root path to /dashboard
@@ -58,6 +59,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/api/github-contributors/{owner}/{repo}', [GithubController::class, 'showContributors'])->name('github.showContributors');
         Route::get('/api/github-repo/{owner}/{repo}', [GithubController::class, 'showRepo'])->name('github.showRepo');
         Route::get('/api/github-branches/{owner}/{repo}', [GithubController::class, 'showBranches'])->name('github.showBranches');
+        Route::get('/api/github-commits/{owner}/{repo}', [GithubController::class, 'showCommits'])->name('github.showCommits');
 
 
         // Retro
@@ -70,9 +72,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/retro/column', [RetroColumnController::class, 'store'])->name('retroColumn.store');
 
         // Retro Card
-        Route::post('/retro/card', [RetroController::class, 'card'])->name('retro.card');
-        Route::put('/retro/card/update/{id}', [RetroController::class, 'updateCard'])->name('retro.updateCard');
-        Route::put('/retro/card/update/name/{id}', [RetroController::class, 'updateCard'])->name('retro.updateCardName');
+        Route::post('/retro/card', [RetroColumnCardController::class, 'store'])->name('retro.card');
+        Route::put('/retro/card/update/{id}', [RetroColumnCardController::class, 'update'])->name('retro.updateCard');
+        Route::put('/retro/card/update/name/{id}', [RetroColumnCardController::class, 'update'])->name('retro.updateCardName');
+        Route::delete('/retro/card/delete/{id}', [RetroColumnCardController::class, 'delete'])->name('retro.deleteCard');
 
         // Common life
         Route::get('common-life', [CommonLifeController::class, 'index'])->name('common-life.index');
@@ -86,7 +89,7 @@ Route::middleware('auth')->group(function () {
 
 });
 
-Broadcast::channel('Retro-Channel', function ($user) {
+Broadcast::channel('retro.{retroId}', function ($user) {
     return true;
 });
 

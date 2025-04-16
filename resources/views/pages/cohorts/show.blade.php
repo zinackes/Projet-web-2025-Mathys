@@ -37,13 +37,6 @@
                                                 <span class="sort-icon"></span>
                                             </span>
                                         </th>
-                                        <th class="min-w-[135px]">
-                                            <span class="sort">
-                                                <span class="sort-label">Date de naissance</span>
-                                                <span class="sort-icon"></span>
-                                            </span>
-                                        </th>
-                                        <th class="max-w-[50px]"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -113,6 +106,12 @@
                             <x-forms.input name="numberUsersInGroups" :value="old('numberUsersInGroups')" :label="__('Nombre étudiants/groupe')"
                                            :messages="$errors->get('numberUsersInGroups')"
                                 :type="'number'"/>
+
+
+                            <x-forms.input name="description" :value="old('description')" :label="__('Description')"
+                                           :placeholder="'Description du projet..'"
+                                           :messages="$errors->get('description')"
+                                           :type="'textarea'"/>
 
                             <x-forms.input name="project_name" :value="old('project_name')" :label="__('Nom du projet')"
                                            :messages="$errors->get('project_name')"/>

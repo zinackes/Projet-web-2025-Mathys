@@ -62,7 +62,7 @@
                                         {{ $group->project_name}}
                                     </td>
                                     <td>
-
+                                        {{ $group->description }}
                                     </td>
                                     <td>
                                         {{$group->cohort->name}}

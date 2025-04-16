@@ -4,35 +4,42 @@ let kanban = null;
 
 const cohortId = params.get('cohortId');
 const retroId = params.get('retroId');
+let modalBtnDismiss = document.getElementById('retro_modal_dismiss');
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 
-Echo.channel('Retro-Channel')
+Echo.channel(`retro.${retroId}`)
     .listen('.Retro.Updated', (event) => {
         const element = document.querySelector(`[data-eid="item-id-${event.retro.id}"]`);
         element.textContent = event.retro.name;
     });
 
-Echo.channel('Retro-Channel')
+Echo.channel(`retro.${retroId}`)
     .listen('.Board.Create', (event) => {
         createColumn(event.board.id, event.board.name);
     });
 
-Echo.channel('Retro-Channel')
+Echo.channel(`retro.${retroId}`)
     .listen('.Card.Create', (event) => {
         createCard(Number(event.card.column_id), event.card.name, event.card.id);
     });
 
-Echo.channel('Retro-Channel')
+Echo.channel(`retro.${retroId}`)
     .listen('.Card.Move', (event) => {
         console.log(event);
         changeCardColumn(event.card.id, Number(event.card.column_id), event.card.name);
     });
 
-Echo.channel('Retro-Channel')
+Echo.channel(`retro.${retroId}`)
     .listen('.Board.Delete', (event) => {
         deleteColumn(event.board.id);
+    });
+
+Echo.channel(`retro.${retroId}`)
+    .listen('.Card.Delete', (event) => {
+        console.log("test");
+        deleteCard(event.card.id);
     });
 
 fetch(`/retro/fetchdata/${cohortId}/${retroId}`, {
@@ -51,7 +58,7 @@ fetch(`/retro/fetchdata/${cohortId}/${retroId}`, {
         retroData = data;
 
         initializeKanban(retroData.response);
-        console.log(retroData.cohortId);
+        console.log(retroData);
     })
     .catch(error => {
         console.error('Erreur lors de la requête GET :', error);
@@ -82,7 +89,13 @@ function initializeKanban(data) {
         },
         click: function (el) {
             let elementId = parseInt(el.getAttribute('data-eid').match(/\d+$/)[0]);
-            updateCardNameToDB(el.textContent, elementId, el);
+            let modalBtn = document.getElementById('openModalBtn');
+            let modalText = document.getElementById('retro_modal_text');
+            let modalId = document.getElementById('retro_modal_id');
+            modalText.value = el.textContent;
+            modalId.value = elementId;
+            modalBtn.click();
+            //updateCardNameToDB(el.textContent, elementId);
         },
         dropEl: function (el, target) {
             let elementId = parseInt(el.getAttribute('data-eid').match(/\d+$/)[0]);
@@ -175,45 +188,54 @@ function addElement(boardId) {
     addCardToDB(boardId);
 }
 
-function updateCardNameToDB(oldTitle, elementId, el) {
-    Swal.fire({
-        title: 'Modifier la carte',
-        input: 'text',
-        inputLabel: 'Nouveau titre de la carte',
-        inputValue: oldTitle,
-        showCancelButton: true,
-        confirmButtonText: 'Mettre à jour',
-        cancelButtonText: 'Annuler',
-        inputValidator: (value) => {
-            if (!value) {
-                return 'Le titre ne peut pas être vide !';
-            }
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const newTitle = result.value;
 
-            fetch(`/retro/card/update/name/${elementId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({
-                    name: newTitle
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Carte mise à jour :', data);
-                    Swal.fire('Carte mise à jour !', '', 'success');
-                })
-                .catch(error => {
-                    console.error('Erreur :', error);
-                    Swal.fire('Erreur lors de la mise à jour', '', 'error');
-                });
+function deleteCard(id) {
+    if (!kanban) {
+        console.error("Kanban non initialisé !");
+        return;
+    }
+    console.log("ID Carte: " + id);
+    kanban.removeElement(`item-id-${id}`);}
+
+window.deleteCardInBdd = deleteCardInBdd;
+function deleteCardInBdd(id){
+    fetch(`/retro/card/delete/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken
         }
-    });
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+        })
+        .catch(error => {
+            console.error('Erreur lors de la suppression :', error);
+        });
+}
+
+
+
+window.updateCardNameToDB = updateCardNameToDB;
+function updateCardNameToDB(title, elementId) {
+    fetch(`/retro/card/update/name/${elementId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({
+            name: title
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Carte mise à jour :', data);
+            modalBtnDismiss.click();
+        })
+        .catch(error => {
+            console.error('Erreur :', error);
+        });
 }
 
 function updateCardToDB(board, title, elementId) {

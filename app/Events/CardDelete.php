@@ -10,12 +10,11 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CardMove implements ShouldBroadcast
+class CardDelete implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $card;
-
     /**
      * Create a new event instance.
      */
@@ -27,12 +26,12 @@ class CardMove implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, Channel>
+     * @return array<int, \Illuminate\Broadcasting\Channel>
      */
     public function broadcastOn(): array
     {
         return [
-            new Channel('retro.' . $this->card->retro_id),
+            new Channel('retro.' . $this->card['retro_id']),
         ];
     }
 
@@ -40,16 +39,12 @@ class CardMove implements ShouldBroadcast
      * @return string
      */
     public function broadcastAs() {
-        return 'Card.Move';
+        return 'Card.Delete';
     }
 
     public function broadcastWith(): array{
         return [
             'card' => $this->card
         ];
-    }
-
-    public function broadcastVia(){
-        return ['sync'];
     }
 }

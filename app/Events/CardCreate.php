@@ -31,7 +31,7 @@ class CardCreate implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('Retro-Channel')
+            new Channel('retro.' . $this->card->retro_id),
         ];
     }
 

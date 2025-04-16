@@ -59,6 +59,6 @@ class RetroColumnController extends Controller
         broadcast(new ColumnDelete($columnData))->toOthers();
         $column->delete();
 
-        return response()->json(['message' => 'Colonne supprimée avec succès.'], 200);
+        return response()->json(['message' => 'Colonne supprimée avec succès.'], 201);
     }
 }

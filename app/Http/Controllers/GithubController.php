@@ -87,4 +87,38 @@ class GithubController extends Controller
 
         return response()->json($response->json());
     }
+
+    public function showCommits($owner, $repo)
+    {
+        $allCommits = [];
+        $page = 1;
+        $perPage = 100; // Max GitHub
+        $maxCommits = 150;
+
+        while (count($allCommits) < $maxCommits) {
+            $response = Http::withToken(env('GITHUB_TOKEN'))
+                ->get("https://api.github.com/repos/{$owner}/{$repo}/commits", [
+                    'page' => $page,
+                    'per_page' => $perPage
+                ]);
+
+            $commits = $response->json();
+
+            if (!$commits || !is_array($commits)) {
+                break;
+            }
+
+            $allCommits = array_merge($allCommits, $commits);
+            $page++;
+
+            if (count($commits) < $perPage) {
+                break; // plus de pages
+            }
+        }
+
+        // Limiter à 150
+        $allCommits = array_slice($allCommits, 0, $maxCommits);
+
+        return response()->json($allCommits);
+    }
 }

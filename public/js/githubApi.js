@@ -57,6 +57,19 @@ async function main() {
             document.querySelector('#github_repo_update_date').textContent = formatDateFr(repoData.updated_at);
         }
 
+        const commitsRequest = await fetch(`/api/github-commits/${owner}/${repo}`);
+
+        if(commitsRequest.ok){
+            const commitsData = await commitsRequest.json();
+            window.commitsChartData = transformCommitsToChartData(commitsData);
+            console.log(window.commitsChartData.series);
+            const script = document.createElement('script');
+            script.src = '/js/chart.js'; // ou `{{ asset('js/chart.js') }}` rendu côté Blade
+            document.body.appendChild(script);
+
+
+        }
+
         /*const branchesRequest = await fetch(`/api/github-branches/${owner}/${repo}`);
 
         if(branchesRequest.ok){
@@ -97,6 +110,46 @@ async function main() {
 }
 
 main();
+
+function transformCommitsToChartData(commits) {
+    const dateSet = new Set();
+    const authorMap = {};
+
+    // Étape 1 : Récupérer toutes les dates (sans doublon) + compter les commits par auteur + date
+    commits.forEach(commit => {
+        const authorName = commit.commit.author.name;
+        const date = new Date(commit.commit.author.date).toISOString().split('T')[0]; // "YYYY-MM-DD"
+        dateSet.add(date);
+
+        if (!authorMap[authorName]) {
+            authorMap[authorName] = {};
+        }
+
+        if (!authorMap[authorName][date]) {
+            authorMap[authorName][date] = 0;
+        }
+
+        authorMap[authorName][date]++;
+    });
+
+    // Étape 2 : Générer un tableau de dates trié (x-axis)
+    const sortedDates = Array.from(dateSet).sort();
+
+    // Étape 3 : Générer les séries formatées
+    const series = Object.entries(authorMap).map(([author, dateCountMap]) => {
+        const data = sortedDates.map(date => dateCountMap[date] || 0); // 0 si aucun commit ce jour-là
+        return {
+            name: author,
+            data
+        };
+    });
+
+    return {
+        series,
+        dates: sortedDates
+    };
+}
+
 
 
 function formatDateFr(isoDateString) {

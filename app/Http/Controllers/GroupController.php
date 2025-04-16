@@ -306,7 +306,7 @@ Répondez **UNIQUEMENT** avec un JSON conforme exactement à cette structure :
                 'user_id' => auth()->user()->id,
                 'cohort_id' => $request->cohort_id,
                 'group_name' => "Groupe " . $group['group_id'],
-                'description' => 'aucune',
+                'description' => $request->description,
                 'start_date' => Date::create(2025, 1, 1, 12, 0, 0),
                 'end_date' => Date::create(2025, 1, 1, 12, 0, 0),
                 'project_name' =>  $request->project_name
