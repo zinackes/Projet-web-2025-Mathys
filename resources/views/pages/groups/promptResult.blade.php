@@ -82,6 +82,12 @@
             <x-forms.input class="hidden" name="description" :value="$request->description" :label="__('Nom du projet')"
                            :messages="$errors->get('description')" :type="'textarea'"/>
 
+            <x-forms.input class="hidden" name="start_date" :value="$request->start_date" :label="__('Date de début')"
+                           :messages="$errors->get('start_date')" :type="'datetime-local'"/>
+
+            <x-forms.input class="hidden" name="end_date" :value="$request->end_date" :label="__('Date de fin')"
+                           :messages="$errors->get('end_date')" :type="'datetime-local'"/>
+
             <button type="submit" class="btn btn-danger">Valider les groupes</button>
         </form>
 

@@ -128,4 +128,10 @@
             </div>
         </div>
     </div>
+
+    <script >
+        console.log(@json($start));
+        console.log(@json($end));
+        console.log('Now: ' + @json(now()));
+    </script>
 </x-app-layout>

@@ -10,6 +10,7 @@ use App\Services\GeminiService;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\Http;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Date;
 class GroupController extends Controller
 {
 
+    use AuthorizesRequests;
 
     /**
      * Display the page
@@ -75,6 +77,9 @@ class GroupController extends Controller
         $group = Group::where('id', $request->group)->first();
 
 
+        $this->authorize('viewDashboard', $group);
+
+
         return view('pages.groups.dashboard',
         ['group' => $group,]
         );
@@ -94,8 +99,12 @@ class GroupController extends Controller
 
     public function updateGithub(Request $request) {
 
+        $group = Group::where('id', $request->group_id);
+
+        $this->authorize('update', $group);
+
         // Update github link for group
-        Group::where('id', $request->group_id)->update([
+        $group->update([
             'github_link' => $request->github_link,
         ]);
 
@@ -105,6 +114,7 @@ class GroupController extends Controller
 
     public function show($project_name) {
 
+
         // decrypt project name
         $decryptedName = Crypt::decryptString($project_name);
 
@@ -112,10 +122,13 @@ class GroupController extends Controller
         $groups = Group::where('project_name', $decryptedName)->get();
         $groupsId = $groups->pluck('id');
 
+        $this->authorize('view', $groups->first());
+
         // get groups from project id and group them
         $studentsByGroup = UserGroup::whereIn('group_id', $groupsId)
             ->get()
             ->groupBy('group_id');
+
 
         return view('pages.groups.show', [
             'groups' => $groups,
@@ -126,6 +139,9 @@ class GroupController extends Controller
 
     public function generate(Request $request, GeminiService $gemini)
     {
+
+        $this->authorize('create', GroupController::class);
+
         $cohortId = $request->cohort_id;
 
         $studentsInCohort = UserCohort::where('cohort_id', $cohortId)->get();
@@ -293,12 +309,16 @@ Répondez **UNIQUEMENT** avec un JSON conforme exactement à cette structure :
 
     public function store(Request $request)
     {
+        $this->authorize('create', GroupController::class);
+
+
         // get the generated json groups
         $groups = session('generated_groups');
 
         if (!$groups) {
             return redirect()->back()->with('error', 'Les groupes ne sont plus disponibles.');
         }
+
 
         // create the number of group from the json;
         foreach ($groups as $group) {
@@ -307,8 +327,8 @@ Répondez **UNIQUEMENT** avec un JSON conforme exactement à cette structure :
                 'cohort_id' => $request->cohort_id,
                 'group_name' => "Groupe " . $group['group_id'],
                 'description' => $request->description,
-                'start_date' => Date::create(2025, 1, 1, 12, 0, 0),
-                'end_date' => Date::create(2025, 1, 1, 12, 0, 0),
+                'start_date' => $request->start_date,
+                'end_date' => $request->end_date,
                 'project_name' =>  $request->project_name
             ]);
 

@@ -121,7 +121,7 @@
                                                     @endif
                                                 </td>
                                                 <td class="text-center">
-                                                    @if(false)
+                                                    @if(!$hasBegun)
                                                         <i class="ki-filled ki-paper-plane cursor-not-allowed"></i>
                                                     @else
                                                         <a class="group" href={{route("retro.show",

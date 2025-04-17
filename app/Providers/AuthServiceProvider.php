@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Group;
 use App\Models\Retros;
 use App\Models\RetrosColumns;
 use App\Models\RetrosColumnsCards;
+use App\Policies\GroupPolicy;
 use App\Policies\RetroColCardPolicy;
 use App\Policies\RetroColumnPolicy;
 use App\Policies\RetroPolicy;
@@ -29,5 +31,6 @@ class AuthServiceProvider extends ServiceProvider
         Gate::policy(Retros::class, RetroPolicy::class);
         Gate::policy(RetrosColumns::class, RetroColumnPolicy::class);
         Gate::policy(RetrosColumnsCards::class, RetroColCardPolicy::class);
+        Gate::policy(Group::class, GroupPolicy::class);
     }
 }

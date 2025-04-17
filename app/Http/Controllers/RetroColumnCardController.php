@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 class RetroColumnCardController extends Controller
 {
 
-    use AuthorizesRequests;
 
     /**
      * Store a card in BDD and send event to pusher

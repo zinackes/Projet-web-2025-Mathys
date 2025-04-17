@@ -94,7 +94,7 @@
                     <form class="flex flex-col gap-3" method="POST" action={{route("group.generate")}}>
                         @csrf
 
-                        <div class="flex gap-3 items-center justify-center">
+                        <div class="grid grid-cols-3 gap-3 items-center justify-center">
                             <x-forms.input
                                 name="numberGroup"
                                 :value="old('numberGroup')"
@@ -108,13 +108,20 @@
                                 :type="'number'"/>
 
 
+                            <x-forms.input name="project_name" :value="old('project_name')" :label="__('Nom du projet')"
+                                           :messages="$errors->get('project_name')" :placeholder="'Le nom du projet'"/>
+
+
                             <x-forms.input name="description" :value="old('description')" :label="__('Description')"
                                            :placeholder="'Description du projet..'"
                                            :messages="$errors->get('description')"
                                            :type="'textarea'"/>
 
-                            <x-forms.input name="project_name" :value="old('project_name')" :label="__('Nom du projet')"
-                                           :messages="$errors->get('project_name')"/>
+                            <x-forms.input name="start_date" :value="old('start_date')" :label="__('Date de début')"
+                                           :messages="$errors->get('start_date')" :type="'datetime-local'"/>
+
+                            <x-forms.input name="end_date" :value="old('end_date')" :label="__('Date de fin')"
+                                           :messages="$errors->get('end_date')" :type="'datetime-local'"/>
                         </div>
 
 

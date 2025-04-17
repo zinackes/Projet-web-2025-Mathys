@@ -81,4 +81,16 @@ class User extends Authenticatable
             ->withPivot('role')
             ->first();
     }
+
+    public function cohort() {
+        // With this, the user can only have 1 cohort
+        return $this->belongsToMany(Cohort::class, 'users_cohorts')
+            ->withPivot('cohort_id')
+            ->first();
+    }
+
+    public function group(){
+        // With this, the user can only have 1 group
+        return $this->belongsToMany(Group::class, 'users_groups', 'user_id', 'group_id');
+    }
 }
