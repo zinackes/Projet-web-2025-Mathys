@@ -30,7 +30,7 @@
                 </button>
             </div>
             <div class="modal-body scrollable-y py-0 my-5 pl-6 pr-3 mr-3">
-                <input type="text" id="retro_modal_text">
+                <input type="text" id="retro_modal_text" class="w-full border border-gray-300 rounded-lg px-2">
                 <input type="number" class="hidden" id="retro_modal_id">
             </div>
             <div class="card-footer justify-end">

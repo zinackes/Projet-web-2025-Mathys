@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Http;
 class GithubController extends Controller
 {
 
+    /**
+     * Show preview image of github repo
+     * @param $owner
+     * @param $repo
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function showPreviewImage($owner, $repo)
     {
         $url = "https://github.com/{$owner}/{$repo}";
@@ -18,6 +24,11 @@ class GithubController extends Controller
         ]);
     }
 
+    /**
+     * Get the link of preview image of github repo
+     * @param $repoUrl
+     * @return string|null
+     */
     private function getGithubPreviewImage($repoUrl)
     {
         try {
@@ -45,9 +56,16 @@ class GithubController extends Controller
         }
     }
 
-
+    /**
+     * return the languages from repo from Github API
+     * @param $owner
+     * @param $repo
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     */
     public function showLanguages($owner, $repo){
 
+        // get response from api
         $response = Http::withToken(env('GITHUB_TOKEN'))
             ->get("https://api.github.com/repos/{$owner}/{$repo}/languages");
 
@@ -55,6 +73,7 @@ class GithubController extends Controller
 
         arsort($languages);
 
+        // get the first element of array
         $mainLanguages = array_key_first($languages);
         $byteSize =  $languages[$mainLanguages];
 
@@ -64,6 +83,14 @@ class GithubController extends Controller
         ]);
     }
 
+
+    /**
+     * return the contributors from repo from github API
+     * @param $owner
+     * @param $repo
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     */
     public function showContributors($owner, $repo){
 
         $response = Http::withToken(env('GITHUB_TOKEN'))
@@ -72,6 +99,13 @@ class GithubController extends Controller
         return response()->json($response->json());
     }
 
+    /**
+     * return the repo information from github API
+     * @param $owner
+     * @param $repo
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     */
     public function showRepo($owner, $repo){
 
         $response = Http::withToken(env('GITHUB_TOKEN'))
@@ -80,6 +114,13 @@ class GithubController extends Controller
         return response()->json($response->json());
     }
 
+    /**
+     *
+     * @param $owner
+     * @param $repo
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     */
     public function showBranches($owner, $repo){
 
         $response = Http::withToken(env('GITHUB_TOKEN'))
@@ -88,13 +129,21 @@ class GithubController extends Controller
         return response()->json($response->json());
     }
 
+    /**
+     * Return commits from repo from github API
+     * @param $owner
+     * @param $repo
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Http\Client\ConnectionException
+     */
     public function showCommits($owner, $repo)
     {
         $allCommits = [];
         $page = 1;
         $perPage = 100; // Max GitHub
-        $maxCommits = 150;
+        $maxCommits = 150; // Max commits to be searched
 
+        // Search trought all pages in githubs
         while (count($allCommits) < $maxCommits) {
             $response = Http::withToken(env('GITHUB_TOKEN'))
                 ->get("https://api.github.com/repos/{$owner}/{$repo}/commits", [
@@ -116,7 +165,7 @@ class GithubController extends Controller
             }
         }
 
-        // Limiter à 150
+        // Limits to 150
         $allCommits = array_slice($allCommits, 0, $maxCommits);
 
         return response()->json($allCommits);

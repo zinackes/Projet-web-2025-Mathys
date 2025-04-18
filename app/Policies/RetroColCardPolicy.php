@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Cohort;
+use App\Models\Retros;
 use App\Models\RetrosColumns;
 use App\Models\RetrosColumnsCards;
 use App\Models\User;
@@ -30,7 +31,7 @@ class RetroColCardPolicy
      */
     public function update(User $user, RetrosColumnsCards $retrosColumnsCards): bool
     {
-        return $user->id === $retrosColumnsCards->retro_id || in_array($user->school()->pivot->role, ['admin', 'teacher']);
+        return $user->id === $retrosColumnsCards->user_id || in_array($user->school()->pivot->role, ['admin', 'teacher']);
     }
 
     /**
@@ -47,7 +48,7 @@ class RetroColCardPolicy
      */
     public function delete(User $user, RetrosColumnsCards $retrosColumnsCards): bool
     {
-        return $user->id === $retrosColumnsCards->retro_id || in_array($user->school()->pivot->role, ['admin', 'teacher']);
+        return $user->id === $retrosColumnsCards->user_id || in_array($user->school()->pivot->role, ['admin', 'teacher']);
     }
 
     /**

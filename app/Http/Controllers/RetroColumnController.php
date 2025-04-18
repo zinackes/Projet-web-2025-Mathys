@@ -50,6 +50,7 @@ class RetroColumnController extends Controller
 
         $column = RetrosColumns::findOrFail($id);
 
+        // store the info from the board before it gets deleted
         $columnData = [
             'id' => $column->id,
             'name' => $column->name,
@@ -57,6 +58,7 @@ class RetroColumnController extends Controller
         ];
 
         broadcast(new ColumnDelete($columnData))->toOthers();
+
         $column->delete();
 
         return response()->json(['message' => 'Colonne supprimée avec succès.'], 201);

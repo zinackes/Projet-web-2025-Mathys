@@ -8,40 +8,6 @@ let modalBtnDismiss = document.getElementById('retro_modal_dismiss');
 
 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-
-Echo.channel(`retro.${retroId}`)
-    .listen('.Retro.Updated', (event) => {
-        const element = document.querySelector(`[data-eid="item-id-${event.retro.id}"]`);
-        element.textContent = event.retro.name;
-    });
-
-Echo.channel(`retro.${retroId}`)
-    .listen('.Board.Create', (event) => {
-        createColumn(event.board.id, event.board.name);
-    });
-
-Echo.channel(`retro.${retroId}`)
-    .listen('.Card.Create', (event) => {
-        createCard(Number(event.card.column_id), event.card.name, event.card.id);
-    });
-
-Echo.channel(`retro.${retroId}`)
-    .listen('.Card.Move', (event) => {
-        console.log(event);
-        changeCardColumn(event.card.id, Number(event.card.column_id), event.card.name);
-    });
-
-Echo.channel(`retro.${retroId}`)
-    .listen('.Board.Delete', (event) => {
-        deleteColumn(event.board.id);
-    });
-
-Echo.channel(`retro.${retroId}`)
-    .listen('.Card.Delete', (event) => {
-        console.log("test");
-        deleteCard(event.card.id);
-    });
-
 fetch(`/retro/fetchdata/${cohortId}/${retroId}`, {
     method: 'GET',
     headers: {
@@ -58,11 +24,50 @@ fetch(`/retro/fetchdata/${cohortId}/${retroId}`, {
         retroData = data;
 
         initializeKanban(retroData.response);
-        console.log(retroData);
     })
     .catch(error => {
         console.error('Erreur lors de la requête GET :', error);
     });
+
+Echo.channel(`retro.${retroId}`)
+    .listen('.Retro.Updated', (event) => {
+        if(event.retro.user_id !== retroData.userId) {
+            const element = document.querySelector(`[data-eid="item-id-${event.retro.id}"]`);
+            element.textContent = event.retro.name;
+        }
+    });
+
+Echo.channel(`retro.${retroId}`)
+    .listen('.Board.Create', (event) => {
+        createColumn(event.board.id, event.board.name);
+
+    });
+
+Echo.channel(`retro.${retroId}`)
+    .listen('.Card.Create', (event) => {
+        if(event.card.user_id !== retroData.userId){
+            createCard(Number(event.card.column_id), event.card.name, event.card.id);
+        }
+    });
+
+Echo.channel(`retro.${retroId}`)
+    .listen('.Card.Move', (event) => {
+        changeCardColumn(event.card.id, Number(event.card.column_id), event.card.name);
+    });
+
+Echo.channel(`retro.${retroId}`)
+    .listen('.Board.Delete', (event) => {
+        deleteColumn(event.board.id);
+    });
+
+Echo.channel(`retro.${retroId}`)
+    .listen('.Card.Delete', (event) => {
+        console.log("test");
+        if(event.card.user_id !== retroData.userId) {
+            deleteCard(event.card.id);
+        }
+    });
+
 
 function initializeKanban(data) {
     // Initialisation de jKanban dans une fonction
@@ -207,7 +212,8 @@ function deleteCardInBdd(id){
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data.message);
+            console.log(data);
+            deleteCard(data.card.id);
         })
         .catch(error => {
             console.error('Erreur lors de la suppression :', error);
@@ -231,6 +237,8 @@ function updateCardNameToDB(title, elementId) {
         .then(response => response.json())
         .then(data => {
             console.log('Carte mise à jour :', data);
+            const element = document.querySelector(`[data-eid="item-id-${data.column.id}"]`);
+            element.textContent = data.column.name;
             modalBtnDismiss.click();
         })
         .catch(error => {
@@ -295,7 +303,6 @@ window.addColumnToDB = function() {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Colonne ajoutée :', data);
-
                     Swal.fire({
                         icon: 'success',
                         title: 'Colonne créée',
@@ -350,6 +357,7 @@ function addCardToDB(boardId) {
                 .then(response => response.json())
                 .then(data => {
                     console.log('Carte ajoutée :', data);
+                    createCard(Number(data.column_id), data.name, data.id);
                 })
                 .catch(error => {
                     console.error('Erreur :', error);

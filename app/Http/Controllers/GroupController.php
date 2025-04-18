@@ -70,6 +70,13 @@ class GroupController extends Controller
     }
 
 
+    /**
+     * return view of dashboard with group model
+     * @param $group_name
+     * @param Request $request
+     * @return Factory|View|Application|object
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function dashboard($group_name, Request $request)
     {
 
@@ -85,6 +92,11 @@ class GroupController extends Controller
         );
     }
 
+    /**
+     * return json of group model
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getInfo($id)
     {
         $group = Group::find($id);
@@ -97,6 +109,12 @@ class GroupController extends Controller
         return response()->json($group);
     }
 
+    /**
+     * update github link in BDD of a group
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function updateGithub(Request $request) {
 
         $group = Group::where('id', $request->group_id);
@@ -112,6 +130,12 @@ class GroupController extends Controller
     }
 
 
+    /**
+     * return view of a group with all its users and group model
+     * @param $project_name
+     * @return Factory|View|Application|object
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function show($project_name) {
 
 
@@ -137,6 +161,14 @@ class GroupController extends Controller
 
     }
 
+    /**
+     * Generate group from ai and return json of groups and users
+     * @param Request $request
+     * @param GeminiService $gemini
+     * @return Factory|View|Application|\Illuminate\Http\JsonResponse|object
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws \Illuminate\Http\Client\ConnectionException
+     */
     public function generate(Request $request, GeminiService $gemini)
     {
 
@@ -307,6 +339,12 @@ Répondez **UNIQUEMENT** avec un JSON conforme exactement à cette structure :
     }
 
 
+    /**
+     * Store in BDD groups and users in groups
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function store(Request $request)
     {
         $this->authorize('create', GroupController::class);
@@ -352,7 +390,10 @@ Répondez **UNIQUEMENT** avec un JSON conforme exactement à cette structure :
     }
 
 
-
+    /**
+     * return view to display prompt result
+     * @return Factory|View|Application|object
+     */
     public function promptResult(){
 
         return view('pages.groups.promptResult');

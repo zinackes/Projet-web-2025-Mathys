@@ -6,6 +6,8 @@ use App\Events\CardCreate;
 use App\Events\CardDelete;
 use App\Events\CardMove;
 use App\Events\RetroUpdated;
+use App\Models\Cohort;
+use App\Models\Retros;
 use App\Models\RetrosColumns;
 use App\Models\RetrosColumnsCards;
 use App\Policies\RetroColCardPolicy;
@@ -15,6 +17,7 @@ use Illuminate\Http\Request;
 class RetroColumnCardController extends Controller
 {
 
+    use AuthorizesRequests;
 
     /**
      * Store a card in BDD and send event to pusher
@@ -50,7 +53,6 @@ class RetroColumnCardController extends Controller
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
     public function update(Request $request, $id) {
-
 
         $card = RetrosColumnsCards::findOrFail($id);
 
@@ -91,10 +93,17 @@ class RetroColumnCardController extends Controller
         return response()->json(['message' => 'Column updated successfully', 'column' => $card]);
     }
 
+    /**
+     * Delete retro card from bdd and send event to pusher
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function delete($id) {
 
 
         $card = RetrosColumnsCards::findOrFail($id);
+
         $this->authorize('delete', $card);
 
 
@@ -107,6 +116,6 @@ class RetroColumnCardController extends Controller
         broadcast(new CardDelete($cardData))->toOthers();
         $card->delete();
 
-        return response()->json(['message' => 'Carte supprimée avec succès.'], 201);
+        return response()->json(['message' => 'Carte supprimée avec succès.', 'card' => $cardData], 201);
     }
 }
