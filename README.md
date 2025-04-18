@@ -92,10 +92,22 @@ npm run dev
 
 ## 🚧 Fonctionnalités principales
 
-- 🔧 Gestion des groupes, promotions, étudiants
-- 📅 Vie commune avec système de pointage
-- 📊 Bilans semestriels étudiants via QCM générés par IA
-- 🧠 Génération automatique de QCM par langage sélectionné
-- ✅ Système de Kanban pour les rétrospectives
-- 📈 Statistiques d’usage et suivi pédagogique
-# Projet-web-2025-Mathys
+J’ai réalisé l’intégralité du **backlog 3**, ce qui comprend les éléments suivants :
+
+- 👥 Il est possible de créer des groupes d’étudiants automatiquement, en fonction de leurs bilans de compétence.
+- 🗂️ Les utilisateurs peuvent créer une rétrospective (format Kanban) pour une promotion donnée.
+- 🔄 Les rétrospectives sont mises à jour en temps réel pour tous les utilisateurs connectés grâce à l’intégration de **Pusher.js**.
+- 📋 Un système de listing permet de retrouver facilement toutes les rétrospectives associées à une promotion.
+
+---
+
+## 🎁 Fonctionnalités bonus
+
+- 📆 Système de gestion de date de début pour les groupes et les rétrospectives (accessibilité restreinte + affichage dynamique)
+- 🗑️ Suppression et modification des cartes/colonnes dans la rétro (avec politiques d'accès – Policies Laravel)
+- 👥 Affichage des groupes en fonction des projets associés
+- 📊 Ajout d’un **dashboard** dédié pour les membres des groupes avec un récapitulatif de le dépôt **GitHub**
+
+
+
+
