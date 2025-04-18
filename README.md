@@ -86,7 +86,18 @@ npm run dev
 |------------|-------------------------------|--------------|
 | **Admin**  | admin@codingfactory.com       | 123456       |
 | Enseignant | teacher@codingfactory.com     | 123456       |
-| Étudiant   | student@codingfactory.com     | 123456       |
+| Étudiant   | john.doe@codingfactory.com    | 123456       |
+| Étudiant   | jane.smith@codingfactory.com  | 123456       |
+| Étudiant   | alice.brown@codingfactory.com     | 123456       |
+| Étudiant   | bob.johnson@codingfactory.com     | 123456       |
+| Étudiant   | charlie.williams@codingfactory.com   | 123456       |
+| Étudiant   | david.miller@codingfactory.com    | 123456       |
+| Étudiant   | emily.wilson@codingfactory.com    | 123456       |
+| Étudiant   | frank.moore@codingfactory.com    | 123456       |
+| Étudiant   | grace.taylor@codingfactory.com    | 123456       |
+| Étudiant   | henry.anderson@codingfactory.com    | 123456       |
+
+
 
 ---
 
