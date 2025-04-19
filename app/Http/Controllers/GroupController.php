@@ -119,8 +119,6 @@ class GroupController extends Controller
 
         $group = Group::where('id', $request->group_id);
 
-        $this->authorize('update', $group);
-
         // Update github link for group
         $group->update([
             'github_link' => $request->github_link,
@@ -172,7 +170,7 @@ class GroupController extends Controller
     public function generate(Request $request, GeminiService $gemini)
     {
 
-        $this->authorize('create', GroupController::class);
+        $this->authorize('create', Group::class);
 
         $cohortId = $request->cohort_id;
 
@@ -347,7 +345,7 @@ Répondez **UNIQUEMENT** avec un JSON conforme exactement à cette structure :
      */
     public function store(Request $request)
     {
-        $this->authorize('create', GroupController::class);
+        $this->authorize('create', Group::class);
 
 
         // get the generated json groups
